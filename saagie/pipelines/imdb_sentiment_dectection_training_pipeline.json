@@ -36,6 +36,18 @@
             "job_id": "c667f96f-4ec4-4b79-9e6a-314f1ec10386",
             "next_nodes": [],
             "is_root_node": false
+          },
+          {
+            "job_name": "Error handling",
+            "job_id": "a1f04f47-b317-43b4-b55d-ee6544b0a9ec",
+            "next_nodes": [],
+            "is_root_node": false
+          },
+          {
+            "job_name": "Error handling",
+            "job_id": "a1f04f47-b317-43b4-b55d-ee6544b0a9ec",
+            "next_nodes": [],
+            "is_root_node": false
           }
         ],
         "condition_nodes": [

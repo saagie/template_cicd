@@ -1,8 +1,6 @@
 import argparse
 import logging
 import json
-import sys
-
 import utils
 
 

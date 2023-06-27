@@ -1,4 +1,3 @@
-import logging
 from saagieapi import SaagieApi, GraphPipeline, ConditionNode, JobNode, ConditionStatusNode, ConditionExpressionNode
 import json
 import shutil
@@ -149,13 +148,15 @@ def create_graph_pipeline(pipeline_config_file, env):
     # Find all job nodes
     for i in range(len(pipeline_info["job_nodes"])):
         job_node_info = pipeline_info["job_nodes"][i]
-        job_id = job_node_info["job_id"]
-        job_nodes[job_id]["node"] = JobNode(job_id)
+        job_tmp = JobNode(job_node_info["job_id"])
+
+        job_uid = job_tmp.uid
+        job_nodes[job_uid]["node"] = pipeline_info["job_nodes"][i]["job_node"]
         if job_node_info["is_root_node"]:
-            graph_pipeline.add_root_node(job_nodes[job_id]["node"])
+            graph_pipeline.add_root_node(job_nodes[job_uid]["node"])
         if job_node_info["next_nodes"]:
-            job_nodes[job_id]["next_nodes_ids"] = job_node_info["next_nodes"]
-            has_next_nodes.add(job_id)
+            job_nodes[job_uid]["next_nodes_ids"] = job_node_info["next_nodes"]
+            has_next_nodes.add(job_uid)
 
     # Find all condition nodes
     for i in range(len(pipeline_info["condition_nodes"])):

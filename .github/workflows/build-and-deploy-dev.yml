@@ -53,3 +53,9 @@ jobs:
       - if: steps.changes.outputs.inference_handler == 'true'
         run: python __main__.py --action update --job_name inference_handler --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
 
+    - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+      with:
+        token: '${{ secrets.GITHUB_TOKEN }}'
+    - run: |
+        git add -A
+        git commit -m "Added files"
