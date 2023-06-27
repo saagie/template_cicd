@@ -70,7 +70,7 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
     status_list = job_config["status_list"] if job_config["status_list"] else None
 
     # check if job exists
-    job_list = client_saagie.jobs.list_for_project_minimal(job_config["env"][env]["project_id"])
+    job_list = client_saagie.jobs.list_for_project_minimal(job_config["env"][env]["project_id"])["jobs"]
     job_names = [job["name"] for job in job_list]
     if job_name in job_names:
         job_id = [job["id"] for job in job_list if job["name"] == job_name][0]

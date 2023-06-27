@@ -1,4 +1,3 @@
-#%%
 ## Import librairies
 import os
 import argparse
@@ -7,7 +6,6 @@ import s3fs
 import pandas as pd
 
 
-#%%
 ## Define logging behavior
 logging.getLogger("tokenizers").setLevel(logging.CRITICAL)  
 logging.getLogger("transformers").setLevel(logging.CRITICAL) 
