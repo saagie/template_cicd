@@ -4,7 +4,6 @@ import json
 import shutil
 
 
-
 def package_code(name_file, root_dir, archive_format="zip"):
     """
     Create a zip archive of a directory
@@ -52,23 +51,23 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
     output_zip = package_code(f"./dist/{job_config['job_name']}", job_config["file_path"])
 
     # var
-    job_name=job_config["job_name"],
-    project_id=job_config["env"][env]["project_id"],
-    description=job_config["description"] if job_config["description"] else "",
-    category=job_config["category"],
-    technology=job_config["technology"],
-    technology_catalog=job_config["technology_catalog"],
-    runtime_version=job_config["runtime_version"],
-    command_line=job_config["command_line"],
-    release_note=job_config["release_note"] if job_config["release_note"] else "",
-    extra_technology=job_config["extra_technology"] if job_config["extra_technology"] else "",
-    extra_technology_version=job_config["extra_technology_version"] if job_config["extra_technology_version"] else "",
-    is_scheduled=job_config["extra_technology_version"] if job_config["extra_technology_version"] else False,
-    cron_scheduling=job_config["cron_scheduling"] if job_config["cron_scheduling"] else None,
-    schedule_timezone=job_config["schedule_timezone"] if job_config["schedule_timezone"] else "UTC",
-    resources=job_config["resources"] if job_config["resources"] else None,
-    emails=job_config["emails"] if job_config["emails"] else None,
-    status_list=job_config["status_list"] if job_config["status_list"] else None
+    job_name = job_config["job_name"],
+    project_id = job_config["env"][env]["project_id"],
+    description = job_config["description"] if job_config["description"] else "",
+    category = job_config["category"],
+    technology = job_config["technology"],
+    technology_catalog = job_config["technology_catalog"],
+    runtime_version = job_config["runtime_version"],
+    command_line = job_config["command_line"],
+    release_note = job_config["release_note"] if job_config["release_note"] else "",
+    extra_technology = job_config["extra_technology"] if job_config["extra_technology"] else "",
+    extra_technology_version = job_config["extra_technology_version"] if job_config["extra_technology_version"] else "",
+    is_scheduled = job_config["extra_technology_version"] if job_config["extra_technology_version"] else False,
+    cron_scheduling = job_config["cron_scheduling"] if job_config["cron_scheduling"] else None,
+    schedule_timezone = job_config["schedule_timezone"] if job_config["schedule_timezone"] else "UTC",
+    resources = job_config["resources"] if job_config["resources"] else None,
+    emails = job_config["emails"] if job_config["emails"] else None,
+    status_list = job_config["status_list"] if job_config["status_list"] else None
 
     # check if job exists
     job_list = client_saagie.jobs.list_for_project_minimal(job_config["env"][env]["project_id"])
@@ -85,17 +84,17 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
             extra_technology=extra_technology,
             extra_technology_version=extra_technology_version,
         )["data"]["addJobVersion"],
-               "editJob": client_saagie.jobs..edit(
-            job_id=job_id,
-            job_name=job_name,
-            description=description,
-            is_scheduled=is_scheduled,
-            cron_scheduling=cron_scheduling,
-            schedule_timezone=schedule_timezone,
-            resources=resources,
-            emails=emails,
-            status_list=status_list,
-        )["editJob"]}
+               "editJob": client_saagie.jobs.edit(
+                   job_id=job_id,
+                   job_name=job_name,
+                   description=description,
+                   is_scheduled=is_scheduled,
+                   cron_scheduling=cron_scheduling,
+                   schedule_timezone=schedule_timezone,
+                   resources=resources,
+                   emails=emails,
+                   status_list=status_list,
+               )["editJob"]}
 
 
     else:
@@ -209,12 +208,11 @@ def create_graph_pipeline(pipeline_config_file, env):
                     if next_node in condition_nodes.keys():
                         condition_node_tmp.add_failure_node(condition_nodes[next_node]["node"])
 
-
-
     return graph_pipeline
 
 
 def get_pipeline_id(client_saagie, pipeline_config_file, env):
+    """WIP"""
     with open(pipeline_config_file, "r") as f:
         pipeline_config = json.load(f)
 
@@ -233,7 +231,8 @@ def get_pipeline_id(client_saagie, pipeline_config_file, env):
         command_line=job_config["command_line"],
         release_note=job_config["release_note"] if job_config["release_note"] else "",
         extra_technology=job_config["extra_technology"] if job_config["extra_technology"] else "",
-        extra_technology_version=job_config["extra_technology_version"] if job_config["extra_technology_version"] else "",
+        extra_technology_version=job_config["extra_technology_version"] if job_config[
+            "extra_technology_version"] else "",
         is_scheduled=job_config["extra_technology_version"] if job_config["extra_technology_version"] else False,
         cron_scheduling=job_config["cron_scheduling"] if job_config["cron_scheduling"] else None,
         schedule_timezone=job_config["schedule_timezone"] if job_config["schedule_timezone"] else "UTC",
@@ -246,9 +245,3 @@ def get_pipeline_id(client_saagie, pipeline_config_file, env):
         with open(job_config_file, "w") as f:
             json.dump(job_config, f, indent=4)
     return res
-
-
-
-
-
-
