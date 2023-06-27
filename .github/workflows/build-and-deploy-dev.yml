@@ -1,0 +1,55 @@
+name: Build and deploy on dev
+
+
+on:
+  push:
+    branches:
+      - '**'        # matches every branch
+      - '!master'   # excludes master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content
+
+      - name: setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' # install the python version needed
+
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            clean_data:
+              - 'code/clean_data/*'
+              - 'saagie/job/clean_data.json'
+            data_preparation:
+              - 'code/data_preparation/*'
+              - 'saagie/job/data_preparation.json'
+            train_model:
+              - 'code/train_model/*'
+              - 'saagie/job/train_model.json'
+            model_deployment:
+              - 'saagie/job/model_deployment.json'
+            inference_handler:
+              - 'code/inference_handler/*'
+              - 'saagie/job/inference_handler.json'
+      - if: steps.changes.outputs.clean_data == 'true
+        run: python __main__.py --action update --job_name clean_data --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
+      - if: steps.changes.outputs.data_preparation == 'true
+        run: python __main__.py --action update --job_name data_preparation --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
+      - if: steps.changes.outputs.train_model == 'true
+        run: python __main__.py --action update --job_name train_model --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
+      - if: steps.changes.outputs.model_deployment == 'true
+        run: python __main__.py --action update --job_name model_deployment --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
+      - if: steps.changes.outputs.inference_handler == 'true
+        run: python __main__.py --action update --job_name inference_handler --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
+

@@ -1,0 +1,3 @@
+s3fs
+datasets==1.18.4
+botocore==1.27.96
