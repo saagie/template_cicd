@@ -51,22 +51,22 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
     output_zip = package_code(f"./dist/{job_config['job_name']}", job_config["file_path"])
 
     # var
-    job_name = job_config["job_name"],
-    project_id = job_config["env"][env]["project_id"],
-    description = job_config["description"] if job_config["description"] else "",
-    category = job_config["category"],
-    technology = job_config["technology"],
-    technology_catalog = job_config["technology_catalog"],
-    runtime_version = job_config["runtime_version"],
-    command_line = job_config["command_line"],
-    release_note = job_config["release_note"] if job_config["release_note"] else "",
-    extra_technology = job_config["extra_technology"] if job_config["extra_technology"] else "",
-    extra_technology_version = job_config["extra_technology_version"] if job_config["extra_technology_version"] else "",
-    is_scheduled = job_config["extra_technology_version"] if job_config["extra_technology_version"] else False,
-    cron_scheduling = job_config["cron_scheduling"] if job_config["cron_scheduling"] else None,
-    schedule_timezone = job_config["schedule_timezone"] if job_config["schedule_timezone"] else "UTC",
-    resources = job_config["resources"] if job_config["resources"] else None,
-    emails = job_config["emails"] if job_config["emails"] else None,
+    job_name = job_config["job_name"]
+    project_id = job_config["env"][env]["project_id"]
+    description = job_config["description"] if job_config["description"] else ""
+    category = job_config["category"]
+    technology = job_config["technology"]
+    technology_catalog = job_config["technology_catalog"]
+    runtime_version = job_config["runtime_version"]
+    command_line = job_config["command_line"]
+    release_note = job_config["release_note"] if job_config["release_note"] else ""
+    extra_technology = job_config["extra_technology"] if job_config["extra_technology"] else ""
+    extra_technology_version = job_config["extra_technology_version"] if job_config["extra_technology_version"] else ""
+    is_scheduled = job_config["extra_technology_version"] if job_config["extra_technology_version"] else False
+    cron_scheduling = job_config["cron_scheduling"] if job_config["cron_scheduling"] else None
+    schedule_timezone = job_config["schedule_timezone"] if job_config["schedule_timezone"] else "UTC"
+    resources = job_config["resources"] if job_config["resources"] else None
+    emails = job_config["emails"] if job_config["emails"] else None
     status_list = job_config["status_list"] if job_config["status_list"] else None
 
     # check if job exists

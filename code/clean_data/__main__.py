@@ -25,7 +25,6 @@ parser.add_argument("--s3bucket", help="s3bucket", required=False, default=os.en
 preprocess_params = vars(parser.parse_args()) # args to dict
 
 
-#%%
 ## Arguments
 s3key = preprocess_params['s3key']
 s3secret = preprocess_params['s3secret']
