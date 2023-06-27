@@ -1,0 +1,108 @@
+{
+  "pipeline_name": "Sentiment analysis pipeline",
+  "env": {
+    "dev": {
+      "platform_id": "1",
+      "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
+      "pipeline_id": "",
+      "graph_pipeline": {
+        "job_nodes": [
+          {
+            "job_name": "1 Data preparation",
+            "job_id": "ece479da-361a-456b-a4a8-154e0cdbcd2c",
+            "next_nodes": ["ece479da-361a-456b-a4a8-154e0cdbcd2c"],
+            "is_root_node": true
+          },
+          {
+            "job_name": "2 Clean data",
+            "job_id": "6c839b17-a9dc-499c-b015-2172edb3da34",
+            "next_nodes": ["cond2"],
+            "is_root_node": false
+          },
+          {
+            "job_name": "3 Train model",
+            "job_id": "2412da59-1f51-47d5-9f87-e248bc86e11b",
+            "next_nodes": [],
+            "is_root_node": false
+          },
+          {
+            "job_name": "4 Model deployment",
+            "job_id": "7bb16c83-9438-47b3-b342-f6e36b0cae48",
+            "next_nodes": [],
+            "is_root_node": false
+          },
+          {
+            "job_name": "5 Inference handler",
+            "job_id": "c667f96f-4ec4-4b79-9e6a-314f1ec10386",
+            "next_nodes": [],
+            "is_root_node": false
+          }
+        ],
+        "condition_nodes": [
+          {
+            "condition_id": "cond1",
+            "condition_type": "status",
+            "value": "AllSuccessOrSkipped",
+            "next_nodes_success": [],
+            "next_nodes_failure": []
+          }
+
+        ]
+      }
+    },
+    "prod": {
+      "platform_id": "2",
+      "pipeline_id": "",
+      "project_id": "",
+      "graph_pipeline": {
+        "job_nodes": [
+          {
+            "job_name": "1 Data preparation",
+            "job_id": "",
+            "next_nodes": []
+          },
+          {
+            "job_name": "2 Clean data",
+            "job_id": "",
+            "next_nodes": []
+          },
+          {
+            "job_name": "3 Train model",
+            "job_id": "",
+            "next_nodes": []
+          },
+          {
+            "job_name": "4 Model deployment",
+            "job_id": "",
+            "next_nodes": []
+          },
+          {
+            "job_name": "5 Inference handler",
+            "job_id": "",
+            "next_nodes": []
+          }
+        ],
+        "condition_nodes": [
+          {
+            "condition_id": "cond1",
+            "condition_type": "expression",
+            "expression": ""
+          },
+          {
+            "condition_id": "cond2",
+            "condition_type": "status",
+            "value": "AllSuccess"
+          }
+
+        ]
+      }
+    }
+  },
+  "description": "Change description",
+  "release_note": "",
+  "emails": null,
+  "status_list": null,
+  "cron_scheduling": null,
+  "schedule_timezone": "UTC",
+  "has_execution_variables_enabled": null
+}
