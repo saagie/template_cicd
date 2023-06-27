@@ -26,8 +26,8 @@ jobs:
 
       - uses: dorny/paths-filter@v2
         id: changes
-        base: 'dev'
         with:
+          base: 'dev'
           filters: |
             clean_data:
               - 'code/clean_data/*'
