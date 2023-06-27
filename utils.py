@@ -96,7 +96,6 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
                    status_list=status_list,
                )["editJob"]}
 
-
     else:
         res = client_saagie.jobs.create(
             job_name=job_name,
@@ -111,7 +110,6 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
             release_note=release_note,
             extra_technology=extra_technology,
             extra_technology_version=extra_technology_version,
-            is_scheduled=is_scheduled,
             cron_scheduling=cron_scheduling,
             schedule_timezone=schedule_timezone,
             resources=resources,
