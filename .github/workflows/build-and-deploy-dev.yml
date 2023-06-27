@@ -42,14 +42,14 @@ jobs:
             inference_handler:
               - 'code/inference_handler/*'
               - 'saagie/job/inference_handler.json'
-      - if: steps.changes.outputs.clean_data == 'true
+      - if: steps.changes.outputs.clean_data == 'true'
         run: python __main__.py --action update --job_name clean_data --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
-      - if: steps.changes.outputs.data_preparation == 'true
+      - if: steps.changes.outputs.data_preparation == 'true'
         run: python __main__.py --action update --job_name data_preparation --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
-      - if: steps.changes.outputs.train_model == 'true
+      - if: steps.changes.outputs.train_model == 'true'
         run: python __main__.py --action update --job_name train_model --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
-      - if: steps.changes.outputs.model_deployment == 'true
+      - if: steps.changes.outputs.model_deployment == 'true'
         run: python __main__.py --action update --job_name model_deployment --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
-      - if: steps.changes.outputs.inference_handler == 'true
+      - if: steps.changes.outputs.inference_handler == 'true'
         run: python __main__.py --action update --job_name inference_handler --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
 

@@ -1,10 +1,10 @@
-name: Build and deploy on dev
+name: Build and deploy on prod
 
 
 on:
   push:
     branches:
-      - 'master'   # excludes master
+      - 'main'   # only push on master
 
 jobs:
   build:
@@ -27,15 +27,28 @@ jobs:
         id: changes
         with:
           filters: |
+            clean_data:
+              - 'code/clean_data/*'
+              - 'saagie/job/clean_data.json'
             data_preparation:
               - 'code/data_preparation/*'
-            model_deployment:
-              - 'code/model_deployment/*'
+              - 'saagie/job/data_preparation.json'
             train_model:
               - 'code/train_model/*'
-      - if: steps.changes.outputs.data_preparation == 'true
-        run: python __main__.py --action update --job_name data_preparation --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM
-      - if: steps.changes.outputs.model_deployment == 'true
-        run: python __main__.py --action update --job_name model_deployment --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM
-      - if: steps.changes.outputs.train_model == 'true
-        run: python __main__.py --action update --job_name train_model --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM
+              - 'saagie/job/train_model.json'
+            model_deployment:
+              - 'saagie/job/model_deployment.json'
+            inference_handler:
+              - 'code/inference_handler/*'
+              - 'saagie/job/inference_handler.json'
+      - if: steps.changes.outputs.clean_data == 'true'
+        run: python __main__.py --action update --job_name clean_data --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env prod
+      - if: steps.changes.outputs.data_preparation == 'true'
+        run: python __main__.py --action update --job_name data_preparation --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env prod
+      - if: steps.changes.outputs.train_model == 'true'
+        run: python __main__.py --action update --job_name train_model --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env prod
+      - if: steps.changes.outputs.model_deployment == 'true'
+        run: python __main__.py --action update --job_name model_deployment --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env prod
+      - if: steps.changes.outputs.inference_handler == 'true'
+        run: python __main__.py --action update --job_name inference_handler --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env prod
+

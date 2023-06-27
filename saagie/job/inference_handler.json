@@ -8,7 +8,7 @@
         "prod": {
             "platform_id": "2",
             "job_id": "",
-            "project_id": ""
+            "project_id": "947de7f2-e482-4668-8221-88149ada2e08"
         }
     },
     "job_name": "5 Inference handler",
