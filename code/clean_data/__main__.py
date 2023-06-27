@@ -13,7 +13,6 @@ logging.basicConfig(level=logging.INFO, format='%(name)s - %(levelname)s - %(mes
 logger = logging.getLogger(__name__)
 
 
-#%%
 ## Manage job parameters
 parser = argparse.ArgumentParser()
 parser.add_argument("--s3bucket_train_csv", help="S3 path where saved csv for training", default='/cleaned-data/train/', required=False)
