@@ -12,7 +12,8 @@ If you want to package the artefact yourself, you have change the function `crea
 
 In this repository, we have 4 Python jobs and 1 Bash job.
 For each python job, we have the source code inside `code`, and for the bash
-job, we only have the job configuration file: `/saagie/job/model_deployment.json`.
+job, we only have the job configuration file: `/saagie/job/model_deployment.json`. In fact, 
+we don't need to create a zip for bash job.
 
 
 
@@ -22,6 +23,7 @@ job, we only have the job configuration file: `/saagie/job/model_deployment.json
 - You have an editor access to Saagie Platform
 - You have to create at least one project in Saagie Platform (in the example, we have one in `dev`, 
 another in `prod`)
+- git clone this repo
 - Change `project_id` value inside all json file at `/saagie/job/`
 - Remove the value of `job_id` for all json file at `/saagie/job/`
 
@@ -54,6 +56,7 @@ another in `prod`)
 
 ## Configuration
 
+If you want to use the CI for your own jobs, make sure that the respect of the following file organisation.
 In this repository, we have 2 directories:
 - `code`:
   - each directories inside `code` is a job in Saagie
