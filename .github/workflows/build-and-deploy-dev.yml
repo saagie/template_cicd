@@ -59,5 +59,4 @@ jobs:
           token: '${{ secrets.GITHUB_TOKEN }}'
       - run: |
           git add -A
-          git commit -m "Added files"
-          git push
+          git commit -m "Added files" --dry-run && git push || echo "Nothing to commit"
