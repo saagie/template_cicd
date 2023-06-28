@@ -24,10 +24,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
       - uses: dorny/paths-filter@v2
         id: changes
         with:
-          base: 'dev'
+          base: ${{ steps.extract_branch.outputs.branch }}
           filters: |
             clean_data:
               - 'code/clean_data/*'
