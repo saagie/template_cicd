@@ -29,7 +29,8 @@ jobs:
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: extract_branch
 
-      - uses: dorny/paths-filter@v2
+      - name: Check file changes
+        uses: dorny/paths-filter@v2
         id: changes
         with:
           base: ${{ steps.extract_branch.outputs.branch }}
@@ -48,20 +49,26 @@ jobs:
             inference_handler:
               - 'code/inference_handler/*'
               - 'saagie/job/inference_handler.json'
-      - if: steps.changes.outputs.clean_data == 'true'
+      - name: Update clean data job
+        if: steps.changes.outputs.clean_data == 'true'
         run: python __main__.py --action update --job_name clean_data --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
-      - if: steps.changes.outputs.data_preparation == 'true'
+      - name: Update data preparation job
+        if: steps.changes.outputs.data_preparation == 'true'
         run: python __main__.py --action update --job_name data_preparation --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
-      - if: steps.changes.outputs.train_model == 'true'
+      - name: Update train model job
+        if: steps.changes.outputs.train_model == 'true'
         run: python __main__.py --action update --job_name train_model --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
-      - if: steps.changes.outputs.model_deployment == 'true'
+      - name: Update model deployment job
+        if: steps.changes.outputs.model_deployment == 'true'
         run: python __main__.py --action update --job_name model_deployment --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
-      - if: steps.changes.outputs.inference_handler == 'true'
+      - name: Update inference handler job
+        if: steps.changes.outputs.inference_handler == 'true'
         run: python __main__.py --action update --job_name inference_handler --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
 
-      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+      - name: commit and push
+        uses: oleksiyrudenko/gha-git-credentials@v2-latest
         with:
           token: '${{ secrets.GITHUB_TOKEN }}'
       - run: |
           git add -A
-          git commit -m "Added files" --dry-run && git push || echo "Nothing to commit"
+          git commit -m "[BOT] Add ID in configuration files" --dry-run && git push || echo "Nothing to commit"
