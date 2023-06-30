@@ -70,5 +70,6 @@ jobs:
         with:
           token: '${{ secrets.GITHUB_TOKEN }}'
       - run: |
+          git checkout ${{ steps.extract_branch.outputs.branch }}
           git add -A
           git commit -m "[BOT] Add ID in configuration files" --dry-run && git push || echo "Nothing to commit"
