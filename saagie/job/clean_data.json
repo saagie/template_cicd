@@ -13,7 +13,7 @@
     },
     "job_name": "2 Clean data",
     "file_path": "../code/clean_data",
-    "description": "",
+    "description": "WIP",
     "category": "Processing",
     "technology": "python",
     "technology_catalog": "Saagie",
