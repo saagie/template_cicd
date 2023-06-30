@@ -3,7 +3,7 @@
         "dev": {
             "platform_id": "1",
             "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "job_id": "b122078d-0590-48c3-b99b-2a6d48e2c0bd"
+            "job_id": ""
         },
         "prod": {
             "platform_id": "2",
