@@ -8,42 +8,49 @@
       "graph_pipeline": {
         "job_nodes": [
           {
+            "id": "job1",
             "job_name": "1 Data preparation",
-            "job_id": "ece479da-361a-456b-a4a8-154e0cdbcd2c",
-            "next_nodes": ["ece479da-361a-456b-a4a8-154e0cdbcd2c"],
+            "job_id": "d7831554-afe4-4d27-b610-610d2d88c379",
+            "next_nodes": ["job2"],
             "is_root_node": true
           },
           {
+            "id": "job2",
             "job_name": "2 Clean data",
-            "job_id": "6c839b17-a9dc-499c-b015-2172edb3da34",
+            "job_id": "afbfaf4e-7864-47e0-83bb-8f6ffed9dbab",
+            "next_nodes": ["cond1"],
+            "is_root_node": false
+          },
+          {
+            "id": "job3",
+            "job_name": "3 Train model",
+            "job_id": "2412da59-1f51-47d5-9f87-e248bc86e11b",
             "next_nodes": ["cond2"],
             "is_root_node": false
           },
           {
-            "job_name": "3 Train model",
-            "job_id": "2412da59-1f51-47d5-9f87-e248bc86e11b",
-            "next_nodes": [],
-            "is_root_node": false
-          },
-          {
+            "id": "job4",
             "job_name": "4 Model deployment",
             "job_id": "7bb16c83-9438-47b3-b342-f6e36b0cae48",
-            "next_nodes": [],
+            "next_nodes": ["job5"],
             "is_root_node": false
           },
           {
+            "id": "job5",
             "job_name": "5 Inference handler",
             "job_id": "c667f96f-4ec4-4b79-9e6a-314f1ec10386",
             "next_nodes": [],
             "is_root_node": false
           },
           {
+            "id": "job6",
             "job_name": "Error handling",
             "job_id": "a1f04f47-b317-43b4-b55d-ee6544b0a9ec",
             "next_nodes": [],
             "is_root_node": false
           },
           {
+            "id": "job7",
             "job_name": "Error handling",
             "job_id": "a1f04f47-b317-43b4-b55d-ee6544b0a9ec",
             "next_nodes": [],
@@ -55,8 +62,15 @@
             "condition_id": "cond1",
             "condition_type": "status",
             "value": "AllSuccessOrSkipped",
-            "next_nodes_success": [],
-            "next_nodes_failure": []
+            "next_nodes_success": ["job3"],
+            "next_nodes_failure": ["job6"]
+          },
+          {
+            "condition_id": "cond2",
+            "condition_type": "expression",
+            "value": "1 + 1 == 2",
+            "next_nodes_success": ["job4"],
+            "next_nodes_failure": ["job7"]
           }
 
         ]
@@ -69,41 +83,69 @@
       "graph_pipeline": {
         "job_nodes": [
           {
+            "id": "job1",
             "job_name": "1 Data preparation",
             "job_id": "",
-            "next_nodes": []
+            "next_nodes": ["job2"],
+            "is_root_node": true
           },
           {
+            "id": "job2",
             "job_name": "2 Clean data",
             "job_id": "",
-            "next_nodes": []
+            "next_nodes": ["cond1"],
+            "is_root_node": false
           },
           {
+            "id": "job3",
             "job_name": "3 Train model",
             "job_id": "",
-            "next_nodes": []
+            "next_nodes": ["cond2"],
+            "is_root_node": false
           },
           {
+            "id": "job4",
             "job_name": "4 Model deployment",
             "job_id": "",
-            "next_nodes": []
+            "next_nodes": ["job5"],
+            "is_root_node": false
           },
           {
+            "id": "job5",
             "job_name": "5 Inference handler",
             "job_id": "",
-            "next_nodes": []
+            "next_nodes": [],
+            "is_root_node": false
+          },
+          {
+            "id": "job6",
+            "job_name": "Error handling",
+            "job_id": "",
+            "next_nodes": [],
+            "is_root_node": false
+          },
+          {
+            "id": "job7",
+            "job_name": "Error handling",
+            "job_id": "",
+            "next_nodes": [],
+            "is_root_node": false
           }
         ],
         "condition_nodes": [
           {
             "condition_id": "cond1",
-            "condition_type": "expression",
-            "expression": ""
+            "condition_type": "status",
+            "value": "AllSuccessOrSkipped",
+            "next_nodes_success": ["job3"],
+            "next_nodes_failure": ["job6"]
           },
           {
             "condition_id": "cond2",
-            "condition_type": "status",
-            "value": "AllSuccess"
+            "condition_type": "expression",
+            "value": "1 + 1 == 2",
+            "next_nodes_success": ["job4"],
+            "next_nodes_failure": ["job7"]
           }
 
         ]
@@ -114,6 +156,7 @@
   "release_note": "",
   "emails": null,
   "status_list": null,
+  "is_scheduled": null,
   "cron_scheduling": null,
   "schedule_timezone": "UTC",
   "has_execution_variables_enabled": null
