@@ -51,12 +51,12 @@ jobs:
               - 'saagie/jobs/inference_handler.json'
             imdb_pipeline:
               - 'saagie/pipelines/imdb_sentiment_dectection_training_pipeline.json'
-      - name: Update clean data job
-        if: steps.changes.outputs.clean_data == 'true'
-        run: python __main__.py --action update_job --job_name clean_data --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
       - name: Update data preparation job
         if: steps.changes.outputs.data_preparation == 'true'
         run: python __main__.py --action update_job --job_name data_preparation --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
+      - name: Update clean data job
+        if: steps.changes.outputs.clean_data == 'true'
+        run: python __main__.py --action update_job --job_name clean_data --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
       - name: Update train model job
         if: steps.changes.outputs.train_model == 'true'
         run: python __main__.py --action update_job --job_name train_model --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev

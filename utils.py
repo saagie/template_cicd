@@ -1,6 +1,7 @@
 from saagieapi import SaagieApi, GraphPipeline, ConditionNode, JobNode, ConditionStatusNode, ConditionExpressionNode
 import json
 import shutil
+import os
 
 
 def package_code(name_file, root_dir, archive_format="zip"):
@@ -46,6 +47,7 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
     """
     with open(job_config_file, "r") as f:
         job_config = json.load(f)
+    file_path = os.path.abspath(job_config_file)
 
     output_zip = package_code(f"./dist/{job_config['job_name']}", job_config["file_path"])
     res = client_saagie.jobs.create_or_upgrade(
@@ -71,7 +73,7 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
     )
     if "data" in res.keys():
         job_config["env"][env]["job_id"] = res["data"]["createJob"]["id"]
-        with open(job_config_file, "w") as f:
+        with open(file_path, "w") as f:
             json.dump(job_config, f, indent=4)
     return res
 
