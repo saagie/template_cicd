@@ -31,7 +31,7 @@
     "technology_catalog": "Saagie",
     "runtime_version": "3.9",
     "command_line": "python {file}",
-    "release_note": "To prod",
+    "release_note": "",
     "extra_technology": "",
     "extra_technology_version": ""
 }

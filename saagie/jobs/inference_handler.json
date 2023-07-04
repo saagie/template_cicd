@@ -31,7 +31,7 @@
     "technology_catalog": "Saagie",
     "runtime_version": "3.9",
     "command_line": "python {file} --model_name \"CommentCLF1\" --input_texts \"['Very good movie!', 'No! Hate this one! Not interesting at all', 'I was looking forward to this movie, excellent actors and music', 'What a nasty cynical film.']\"",
-    "release_note": "To prod",
+    "release_note": "",
     "extra_technology": "",
     "extra_technology_version": ""
 }

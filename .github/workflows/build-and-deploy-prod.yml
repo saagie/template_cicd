@@ -1,11 +1,10 @@
-name: Build and deploy on dev
+name: Build and deploy on prod
 
 
 on:
   push:
     branches:
-      - '**'        # matches every branch
-      - '!main'   # excludes main
+      - 'main'        # matches only main
 
 jobs:
   build:
