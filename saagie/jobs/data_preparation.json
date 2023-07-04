@@ -13,7 +13,7 @@
         },
         "prod": {
             "platform_id": "2",
-            "job_id": "",
+            "job_id": "8e9b1909-b1fc-44d6-97eb-e7979a73a663",
             "project_id": "947de7f2-e482-4668-8221-88149ada2e08",
             "is_scheduled": false,
             "cron_scheduling": null,
