@@ -68,6 +68,9 @@ jobs:
       - name: Update inference handler job
         if: steps.changes.outputs.inference_handler == 'true'
         run: python __main__.py --action update_job --job_name inference_handler --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
+      - name: Update error handling job
+        if: steps.changes.outputs.error_handling == 'true'
+        run: python __main__.py --action update_job --job_name error_handling --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
       - name: Update imdb sentiment detection pipeline
         if: steps.changes.outputs.imdb_pipeline == 'true'
         run: python __main__.py --action update_pipeline --pipeline_name imdb_sentiment_dectection_training_pipeline --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
