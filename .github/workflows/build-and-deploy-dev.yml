@@ -49,6 +49,8 @@ jobs:
             inference_handler:
               - 'code/inference_handler/*'
               - 'saagie/jobs/inference_handler.json'
+            model_deployment:
+              - 'saagie/jobs/error_handling.json'
             imdb_pipeline:
               - 'saagie/pipelines/imdb_sentiment_dectection_training_pipeline.json'
       - name: Update data preparation job
