@@ -4,15 +4,15 @@
 This directory contains an example to use github action to deploy jobs inside Saagie Platform using
 [saagieapi](https://saagieapi.readthedocs.io/en/latest/).
 
-You can `package`, `update` or `run` your Saagie job with this project.
+You can use the following actions to interact with Saagie platform: `package_job`, `update_job`, `run_job`, `update_pipeline`.
 Packaging only available for python package code.
 
-The `update` action depends on `package`, and the `run` action depends on `update` one.
+The `update_job` action depends on `package_job`, and the `run_job` action depends on `update` one.
 If you want to package the artefact yourself, you have change the function `create_or_upgrade_job` in `utils.py`.
 
-In this repository, we have 4 Python jobs and 1 Bash job.
+In this repository, we have 4 Python jobs and 2 Bash job.
 For each python job, we have the source code inside `code`, and for the bash
-job, we only have the job configuration file: `/saagie/job/model_deployment.json`. In fact, 
+job, we only have the job configuration file, for example: `/saagie/job/model_deployment.json`. In fact, 
 we don't need to create a zip for bash job.
 
 
@@ -24,8 +24,8 @@ we don't need to create a zip for bash job.
 - You have to create at least one project in Saagie Platform (in the example, we have one in `dev`, 
 another in `prod`)
 - git clone this repo
-- Change `project_id` value inside all json file at `/saagie/job/`
-- Remove the value of `job_id` for all json file at `/saagie/job/`
+- Change `project_id` value inside all json file at `/saagie/jobs/`
+- Remove the value of `job_id` for all json file at `/saagie/jobs/`
 
 ### Local prerequisite
 
@@ -41,17 +41,24 @@ another in `prod`)
 - To package a job, you can run the following command by replacing `your_job_name` by the  job that you want to package: `python __main__.py --action package --job_name your_job_name`
 - To update a job,
   * For windows user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-  `python __main__.py --action update --job_name your_job_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_LOGIN% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env dev`
+  `python __main__.py --action update_job --job_name your_job_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_LOGIN% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env dev`
 
   * For Linux user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-    `python __main__.py --action update --job_name your_job_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_LOGIN --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev`
+    `python __main__.py --action update_job --job_name your_job_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_LOGIN --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev`
 
 - To run a job, same thing as update, by using `--action run`,
   * For windows user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-        `python __main__.py --action run --job_name your_job_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_LOGIN% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env dev`
+        `python __main__.py --action run_job --job_name your_job_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_LOGIN% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env dev`
 
   * For Linux user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-    `python __main__.py --action run --job_name your_job_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_LOGIN --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev`
+    `python __main__.py --action run_job --job_name your_job_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_LOGIN --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev`
+
+- To update a pipeline,
+  * For windows user, use the following command line by replacing `your_pipeline_name` and `dev` if you want to use another environment:
+    `python __main__.py --action update_pipeline --pipeline_name your_pipeline_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_LOGIN% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env dev`
+
+  * For Linux user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
+    `python __main__.py --action update_pipeline --pipeline_name your_pipeline_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_LOGIN --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev`
 
 
 ## Configuration
@@ -61,16 +68,16 @@ In this repository, we have 2 directories:
 - `code`:
   - each directories inside `code` is a job in Saagie
 - `saagie`: 
-  - `job`:
+  - `jobs`:
     - each json file is a configuration file for a job, the name of the file should be the same 
   as the name of job directory in `code`
-  - `pipeline`:
+  - `pipelines`:
     - each json file is a configuration file for a pipeline
 
 
 ### Job configuration file
 
-Each json file inside `/saagie/job` has following schema: 
+Each json file inside `/saagie/jobs` has following schema: 
 
 #### Job
 
@@ -100,6 +107,53 @@ Type: `object`
           - _ID of the Saagie job_
           - Type: `string`
           - Example: `"a1f04f47-b317-43b4-b55d-ee6544b0a8ec"`
+      - **_is_scheduled_**
+        - _True if the job is scheduled, else False_
+        - Type: `bool`
+      - **_cron_scheduling_**
+        - _Scheduling CRON format_
+        - Type: `string`
+      - **_schedule_timezone_**
+        - _Timezone of the scheduling_
+        - Type: `string`
+      - **_resources_**
+        - _CPU, memory limit and requests_
+        - Type: `object`
+        - **_Properties_**:
+          - **_cpu_**
+            - _CPU limit and request_
+            - Type: `object`
+            - **_Properties_**:
+              - **_request_**
+                - _CPU request_
+                - Type: `double`
+                - Example: `1`
+              - **_limit_**
+                - _CPU limit_
+                - Type: `double`
+                - Example: `1`
+          - **_memory_**
+            - _Memory limit and request_
+            - Type: `object`
+            - **_Properties_**:
+              - **_request_**
+                - _Memory request_
+                - Type: `double`
+                - Example: `1`
+              - **_limit_**
+                - _Memory limit_
+                - Type: `double`
+                - Example: `1`
+      - **_emails_**
+        - _Emails to receive alerts for the job, each item should be a valid email_
+        - Type: `List[String]`
+        - Example: `["test_user1@gmail.com", "test_user2@gmail.com"]`
+      - **_status_list_**
+        - _Receive an email when the job status change to a specific status. Each item of the list should be one of these following values: `REQUESTED`, `QUEUED`,
+          `RUNNING`, `FAILED`, `KILLED`, `KILLING`, `SUCCEEDED`, `UNKNOWN`, `AWAITING`, `SKIPPED`_
+        - Type: `List[String]`
+        - Example:  `["FAILED", "KILLED", "UNKNOWN"]`
+
 
 - **_job_name_** `required`
   - _Job name_
@@ -145,50 +199,3 @@ Type: `object`
   - _Version of the extra technology. Leave to empty string when not
     needed_
   - Type: `string`
-- **_is_scheduled_**
-  - _True if the job is scheduled, else False_
-  - Type: `bool`
-- **_cron_scheduling_**
-  - _Scheduling CRON format_
-  - Type: `string`
-- **_schedule_timezone_**
-  - _Timezone of the scheduling_
-  - Type: `string`
-- **_resources_**
-  - _CPU, memory limit and requests_
-  - Type: `object`
-  - **_Properties_**:
-    - **_cpu_**
-      - _CPU limit and request_
-      - Type: `object`
-      - **_Properties_**:
-        - **_request_**
-          - _CPU request_
-          - Type: `double`
-          - Example: `1`
-        - **_limit_**
-          - _CPU limit_
-          - Type: `double`
-          - Example: `1`
-    - **_memory_**
-      - _Memory limit and request_
-      - Type: `object`
-      - **_Properties_**:
-          - **_request_**
-              - _Memory request_
-              - Type: `double`
-              - Example: `1`
-          - **_limit_**
-              - _Memory limit_
-              - Type: `double`
-              - Example: `1`
-- **_emails_**
-  - _Emails to receive alerts for the job, each item should be a valid email_
-  - Type: `List[String]`
-  - Example: `["test_user1@gmail.com", "test_user2@gmail.com"]`
-- **_status_list_**
-  - _Receive an email when the job status change to a specific status. Each item of the list should be one of these following values: `REQUESTED`, `QUEUED`,
-    `RUNNING`, `FAILED`, `KILLED`, `KILLING`, `SUCCEEDED`, `UNKNOWN`, `AWAITING`, `SKIPPED`_
-  - Type: `List[String]`
-  - Example:  `["FAILED", "KILLED", "UNKNOWN"]`
-
