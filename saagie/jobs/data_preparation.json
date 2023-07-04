@@ -3,12 +3,24 @@
         "dev": {
             "platform_id": "1",
             "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "job_id": "38f6c947-ff53-405b-9e17-bc721f6154ab"
+            "job_id": "38f6c947-ff53-405b-9e17-bc721f6154ab",
+            "is_scheduled": false,
+            "cron_scheduling": null,
+            "schedule_timezone": "UTC",
+            "resources": null,
+            "emails": null,
+            "status_list": null
         },
         "prod": {
             "platform_id": "2",
             "job_id": "",
-            "project_id": "947de7f2-e482-4668-8221-88149ada2e08"
+            "project_id": "947de7f2-e482-4668-8221-88149ada2e08",
+            "is_scheduled": false,
+            "cron_scheduling": null,
+            "schedule_timezone": "UTC",
+            "resources": null,
+            "emails": null,
+            "status_list": null
         }
     },
     "job_name": "1 Data preparation",
@@ -21,11 +33,5 @@
     "command_line": "python {file}",
     "release_note": "WIP",
     "extra_technology": "",
-    "extra_technology_version": "",
-    "is_scheduled": false,
-    "cron_scheduling": null,
-    "schedule_timezone": "UTC",
-    "resources": null,
-    "emails": null,
-    "status_list": null
+    "extra_technology_version": ""
 }

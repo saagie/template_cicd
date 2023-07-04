@@ -64,12 +64,12 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
         extra_technology=job_config["extra_technology"] if job_config["extra_technology"] else "",
         extra_technology_version=job_config["extra_technology_version"] if job_config[
             "extra_technology_version"] else "",
-        is_scheduled=job_config["extra_technology_version"] if job_config["extra_technology_version"] else False,
-        cron_scheduling=job_config["cron_scheduling"] if job_config["cron_scheduling"] else None,
-        schedule_timezone=job_config["schedule_timezone"] if job_config["schedule_timezone"] else "UTC",
-        resources=job_config["resources"] if job_config["resources"] else None,
-        emails=job_config["emails"] if job_config["emails"] else None,
-        status_list=job_config["status_list"] if job_config["status_list"] else None
+        is_scheduled=job_config["env"][env]["extra_technology_version"] if job_config["env"][env]["extra_technology_version"] else False,
+        cron_scheduling=job_config["env"][env]["cron_scheduling"] if job_config["env"][env]["cron_scheduling"] else None,
+        schedule_timezone=job_config["env"][env]["schedule_timezone"] if job_config["env"][env]["schedule_timezone"] else "UTC",
+        resources=job_config["env"][env]["resources"] if job_config["env"][env]["resources"] else None,
+        emails=job_config["env"][env]["emails"] if job_config["env"][env]["emails"] else None,
+        status_list=job_config["env"][env]["status_list"] if job_config["env"][env]["status_list"] else None
     )
     if "data" in res.keys():
         job_config["env"][env]["job_id"] = res["data"]["createJob"]["id"]
@@ -93,6 +93,12 @@ def run_job(client_saagie, job_config_file, env):
 
 
 def create_graph(pipeline_config_file, env):
+    """
+    Create the Graph of Saagie graph pipeline
+    :param pipeline_config_file: str, pipeline config file path
+    :param env: str, environment of Saagie that you want upgrade pipeline
+    :return: saagieapi.GraphPipeline
+    """
     with open(pipeline_config_file, "r") as f:
         pipeline_config = json.load(f)
     pipeline_info = pipeline_config["env"][env]["graph_pipeline"]
@@ -168,7 +174,13 @@ def create_graph(pipeline_config_file, env):
 
 
 def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env):
-    """WIP"""
+    """
+    Create or upgrade pipeline in Saagie
+    :param client_saagie: SaagieAPI, an instance of SaagieAPI
+    :param pipeline_config_file: str, pipeline config file path
+    :param env: str, environment of Saagie that you want upgrade pipeline
+    :return: dict of pipeline information
+    """
     with open(pipeline_config_file, "r") as f:
         pipeline_config = json.load(f)
 

@@ -3,12 +3,24 @@
         "dev": {
             "platform_id": "1",
             "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "job_id": "6b9a0aad-6f9d-46be-a577-0940b1c9e51c"
+            "job_id": "6b9a0aad-6f9d-46be-a577-0940b1c9e51c",
+            "is_scheduled": false,
+            "cron_scheduling": null,
+            "schedule_timezone": "UTC",
+            "resources": null,
+            "emails": null,
+            "status_list": null
         },
         "prod": {
             "platform_id": "2",
             "job_id": "",
-            "project_id": "947de7f2-e482-4668-8221-88149ada2e08"
+            "project_id": "947de7f2-e482-4668-8221-88149ada2e08",
+            "is_scheduled": false,
+            "cron_scheduling": null,
+            "schedule_timezone": "UTC",
+            "resources": null,
+            "emails": null,
+            "status_list": null
         }
     },
     "job_name": "3 Train model",
@@ -21,11 +33,5 @@
     "command_line": "python {file} --nb_train_epochs 4 --model_name 'prajjwal1/bert-tiny' --train_batchsize 16 --test_batchsize 16 --nb_unfrozen_layers 10 --train_subset_size 5000 --test_subset_size 1000 --seed 60 --device 'cpu' --mlflowserver_url $MLFLOWSERVER_URL --mlflow_experiment_name $MLFLOW_EXP_NAME --s3bucket $AWS_BUCKET --s3bucket_train_csv /cleaned-data/train/ --s3bucket_test_csv /cleaned-data/test/\necho \"Finetuning finished successfully\"",
     "release_note": "WIP",
     "extra_technology": "",
-    "extra_technology_version": "",
-    "is_scheduled": false,
-    "cron_scheduling": null,
-    "schedule_timezone": "UTC",
-    "resources": null,
-    "emails": null,
-    "status_list": null
+    "extra_technology_version": ""
 }

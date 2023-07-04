@@ -3,12 +3,24 @@
         "dev": {
             "platform_id": "1",
             "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "job_id": "600f5622-3d34-4d09-9d2d-fb108ca2f794"
+            "job_id": "600f5622-3d34-4d09-9d2d-fb108ca2f794",
+            "is_scheduled": false,
+            "cron_scheduling": null,
+            "schedule_timezone": "UTC",
+            "resources": null,
+            "emails": null,
+            "status_list": null
         },
         "prod": {
             "platform_id": "2",
             "job_id": "947de7f2-e482-4668-8221-88149ada2e08",
-            "project_id": ""
+            "project_id": "",
+            "is_scheduled": false,
+            "cron_scheduling": null,
+            "schedule_timezone": "UTC",
+            "resources": null,
+            "emails": null,
+            "status_list": null
         }
     },
     "job_name": "2 Clean data",
@@ -21,11 +33,5 @@
     "command_line": "python {file} --s3bucket_train_csv '/cleaned-data/train/' --s3bucket_test_csv '/cleaned-data/test/'",
     "release_note": "WIP",
     "extra_technology": "",
-    "extra_technology_version": "",
-    "is_scheduled": false,
-    "cron_scheduling": null,
-    "schedule_timezone": "UTC",
-    "resources": null,
-    "emails": null,
-    "status_list": null
+    "extra_technology_version": ""
 }
