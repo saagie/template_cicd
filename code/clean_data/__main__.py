@@ -1,4 +1,3 @@
-#%%
 ## Import librairies
 import os
 import argparse
@@ -7,7 +6,6 @@ import s3fs
 import pandas as pd
 
 
-#%%
 ## Define logging behavior
 logging.getLogger("tokenizers").setLevel(logging.CRITICAL)  
 logging.getLogger("transformers").setLevel(logging.CRITICAL) 
@@ -15,7 +13,6 @@ logging.basicConfig(level=logging.INFO, format='%(name)s - %(levelname)s - %(mes
 logger = logging.getLogger(__name__)
 
 
-#%%
 ## Manage job parameters
 parser = argparse.ArgumentParser()
 parser.add_argument("--s3bucket_train_csv", help="S3 path where saved csv for training", default='/cleaned-data/train/', required=False)
@@ -27,7 +24,6 @@ parser.add_argument("--s3bucket", help="s3bucket", required=False, default=os.en
 preprocess_params = vars(parser.parse_args()) # args to dict
 
 
-#%%
 ## Arguments
 s3key = preprocess_params['s3key']
 s3secret = preprocess_params['s3secret']

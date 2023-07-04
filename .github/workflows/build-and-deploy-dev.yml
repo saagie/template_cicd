@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - '**'        # matches every branch
-      - '!master'   # excludes master
+      - '!main'   # excludes main
 
 jobs:
   build:
@@ -24,32 +24,59 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - uses: dorny/paths-filter@v2
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - name: Check file changes
+        uses: dorny/paths-filter@v2
         id: changes
         with:
+          base: ${{ steps.extract_branch.outputs.branch }}
           filters: |
             clean_data:
               - 'code/clean_data/*'
-              - 'saagie/job/clean_data.json'
+              - 'saagie/jobs/clean_data.json'
             data_preparation:
               - 'code/data_preparation/*'
-              - 'saagie/job/data_preparation.json'
+              - 'saagie/jobs/data_preparation.json'
             train_model:
               - 'code/train_model/*'
-              - 'saagie/job/train_model.json'
+              - 'saagie/jobs/train_model.json'
             model_deployment:
-              - 'saagie/job/model_deployment.json'
+              - 'saagie/jobs/model_deployment.json'
             inference_handler:
               - 'code/inference_handler/*'
-              - 'saagie/job/inference_handler.json'
-      - if: steps.changes.outputs.clean_data == 'true'
-        run: python __main__.py --action update --job_name clean_data --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
-      - if: steps.changes.outputs.data_preparation == 'true'
-        run: python __main__.py --action update --job_name data_preparation --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
-      - if: steps.changes.outputs.train_model == 'true'
-        run: python __main__.py --action update --job_name train_model --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
-      - if: steps.changes.outputs.model_deployment == 'true'
-        run: python __main__.py --action update --job_name model_deployment --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
-      - if: steps.changes.outputs.inference_handler == 'true'
-        run: python __main__.py --action update --job_name inference_handler --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev
+              - 'saagie/jobs/inference_handler.json'
+            error_handling:
+              - 'saagie/jobs/error_handling.json'
+            imdb_pipeline:
+              - 'saagie/pipelines/imdb_sentiment_dectection_training_pipeline.json'
+      - name: Update data preparation job
+        if: steps.changes.outputs.data_preparation == 'true'
+        run: python __main__.py --action update_job --job_name data_preparation --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
+      - name: Update clean data job
+        if: steps.changes.outputs.clean_data == 'true'
+        run: python __main__.py --action update_job --job_name clean_data --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
+      - name: Update train model job
+        if: steps.changes.outputs.train_model == 'true'
+        run: python __main__.py --action update_job --job_name train_model --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
+      - name: Update model deployment job
+        if: steps.changes.outputs.model_deployment == 'true'
+        run: python __main__.py --action update_job --job_name model_deployment --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
+      - name: Update inference handler job
+        if: steps.changes.outputs.inference_handler == 'true'
+        run: python __main__.py --action update_job --job_name inference_handler --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
+      - name: Update imdb sentiment detection pipeline
+        if: steps.changes.outputs.imdb_pipeline == 'true'
+        run: python __main__.py --action update_pipeline --pipeline_name imdb_sentiment_dectection_training_pipeline --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
 
+      - name: commit and push
+        uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+      - run: |
+          git status
+          git add .
+          git commit -m "[BOT] Add ID in configuration files" && git push || echo "Nothing to commit"

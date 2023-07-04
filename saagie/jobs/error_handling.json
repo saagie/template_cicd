@@ -1,0 +1,37 @@
+{
+    "env": {
+        "dev": {
+            "platform_id": "1",
+            "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
+            "job_id": "0510cb33-09cf-417d-90ac-d357b5628481",
+            "is_scheduled": false,
+            "cron_scheduling": null,
+            "schedule_timezone": "UTC",
+            "resources": null,
+            "emails": null,
+            "status_list": null
+        },
+        "prod": {
+            "platform_id": "2",
+            "job_id": "",
+            "project_id": "947de7f2-e482-4668-8221-88149ada2e08",
+            "is_scheduled": false,
+            "cron_scheduling": null,
+            "schedule_timezone": "UTC",
+            "resources": null,
+            "emails": null,
+            "status_list": null
+        }
+    },
+    "job_name": "Error handling",
+    "file_path": "",
+    "description": "",
+    "category": "Processing",
+    "technology": "bash",
+    "technology_catalog": "Saagie",
+    "runtime_version": "debian12-bookworm",
+    "command_line": "echo 'ERROR'",
+    "release_note": "WIP",
+    "extra_technology": "",
+    "extra_technology_version": ""
+}
