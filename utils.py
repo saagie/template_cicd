@@ -64,7 +64,7 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
         extra_technology=job_config["extra_technology"] if job_config["extra_technology"] else "",
         extra_technology_version=job_config["extra_technology_version"] if job_config[
             "extra_technology_version"] else "",
-        is_scheduled=job_config["env"][env]["extra_technology_version"] if job_config["env"][env]["extra_technology_version"] else False,
+        is_scheduled=job_config["env"][env]["is_scheduled"] if job_config["env"][env]["is_scheduled"] else False,
         cron_scheduling=job_config["env"][env]["cron_scheduling"] if job_config["env"][env]["cron_scheduling"] else None,
         schedule_timezone=job_config["env"][env]["schedule_timezone"] if job_config["env"][env]["schedule_timezone"] else "UTC",
         resources=job_config["env"][env]["resources"] if job_config["env"][env]["resources"] else None,
