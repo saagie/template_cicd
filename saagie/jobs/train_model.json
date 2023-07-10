@@ -24,7 +24,7 @@
         }
     },
     "job_name": "3 Train model",
-    "file_path": "../code/train_model",
+    "file_path": "code/train_model",
     "description": "Change description",
     "category": "Processing",
     "technology": "python",

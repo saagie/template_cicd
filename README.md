@@ -7,7 +7,7 @@ This directory contains an example to use github action to deploy jobs inside Sa
 You can use the following actions to interact with Saagie platform: `package_job`, `update_job`, `run_job`, `update_pipeline`.
 Packaging only available for python package code.
 
-The `update_job` action depends on `package_job`, and the `run_job` action depends on `update` one.
+The `update_job` action depends on `package_job`, and the `run_job` action depends on `update_job` one.
 If you want to package the artefact yourself, you have change the function `create_or_upgrade_job` in `utils.py`.
 
 In this repository, we have 4 Python jobs and 2 Bash job.
@@ -59,6 +59,13 @@ we don't need to create a zip for bash job.
 
   * For Linux user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
     `python __main__.py --action update_pipeline --pipeline_name your_pipeline_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_LOGIN --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev`
+
+- To run a pipeline,
+  * For windows user, use the following command line by replacing `your_pipeline_name` and `dev` if you want to use another environment:
+    `python __main__.py --action run_pipeline --pipeline_name your_pipeline_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_LOGIN% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env dev`
+
+  * For Linux user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
+    `python __main__.py --action run_pipeline --pipeline_name your_pipeline_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_LOGIN --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env dev`
 
 
 ## Configuration

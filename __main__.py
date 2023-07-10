@@ -7,8 +7,10 @@ import utils
 def main():
     # Retrieving arguments
     parser = argparse.ArgumentParser(description='Continous integration in Saagie Project')
-    parser.add_argument("--action", type=str, choices=['package_job', 'update_job', 'run_job', 'update_pipeline'],
-                        help="Action to do with job: 'package_job', 'update_job', 'run_job', 'update_pipeline'",
+    parser.add_argument("--action", type=str, choices=['package_job', 'update_job', 'run_job', 'update_pipeline',
+                                                       'run_pipeline'],
+                        help="Action to do with job: 'package_job', 'update_job', 'run_job', 'update_pipeline', "
+                             "'run_pipeline'",
                         required=True)
     parser.add_argument("--job_name", type=str,
                         help="Name of the job", required=False)
@@ -61,6 +63,17 @@ def main():
         utils.create_or_upgrade_graph_pipeline(client_saagie,
                                                f"saagie/pipelines/{args.pipeline_name}.json",
                                                args.saagie_env)
+    if args.action == "run_pipeline":
+        with open(f"saagie/pipelines/{args.pipeline_name}.json", "r") as f:
+            pipeline_config = json.load(f)
+        client_saagie = utils.connect_to_saagie(args.saagie_url,
+                                                pipeline_config["env"][args.saagie_env]["platform_id"],
+                                                args.saagie_user,
+                                                args.saagie_pwd,
+                                                args.saagie_realm)
+        utils.run_pipeline(client_saagie,
+                           f"saagie/pipelines/{args.pipeline_name}.json",
+                           args.saagie_env)
 
     logging.info("DONE")
 

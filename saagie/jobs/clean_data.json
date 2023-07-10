@@ -24,7 +24,7 @@
         }
     },
     "job_name": "2 Clean data",
-    "file_path": "../code/clean_data",
+    "file_path": "code/clean_data",
     "description": "new desciption",
     "category": "Processing",
     "technology": "python",
