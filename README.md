@@ -1,7 +1,7 @@
 # Example of CI/CD with saagieapi (Python)
 
 ## Description
-This project contains an example to use github action to deploy jobs inside Saagie Platform using
+This project contains an __example__ to use github action to deploy jobs inside Saagie Platform using
 [saagieapi](https://saagieapi.readthedocs.io/en/latest/).
 
 You can use the following actions to interact with Saagie platform: `package_job`, `update_job`, `run_job`, `update_pipeline`.
@@ -73,7 +73,7 @@ we don't need to create a zip for bash job.
 If you want to use the CI for your own jobs, make sure that the respect of the following file organisation.
 In this repository, we have 2 directories:
 - `code`:
-  - each directories inside `code` is a job in Saagie
+  - each directories inside `code` is a __job__ in Saagie
 - `saagie`:
   - `jobs`:
     - each json file is a configuration file for a job, the name of the file should be the same
@@ -81,6 +81,8 @@ In this repository, we have 2 directories:
   - `pipelines`:
     - each json file is a configuration file for a pipeline
 
+You can also modify github workflows. For now, each push on a branch will trigger a check to see which ones
+have been modified. Based on this, it will trigger actions such as updating a job, or updating a pipeline.
 
 ### Job configuration file
 
