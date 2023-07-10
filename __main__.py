@@ -17,13 +17,13 @@ def main():
     parser.add_argument("--pipeline_name", type=str,
                         help="Name of the pipeline", required=False)
     parser.add_argument("--saagie_url", type=str,
-                        help="URL of Saagie Platform", required=True)
+                        help="URL of Saagie Platform", required=False)
     parser.add_argument("--saagie_user", type=str,
-                        help="Saagie user", required=True)
+                        help="Saagie user", required=False)
     parser.add_argument("--saagie_pwd", type=str,
-                        help="Saagie user's password", required=True)
+                        help="Saagie user's password", required=False)
     parser.add_argument("--saagie_realm", type=str,
-                        help="Saagie_realm", required=True)
+                        help="Saagie_realm", required=False)
     parser.add_argument("--saagie_env", type=str,
                         help="Saagie environment", required=False, default="dev")
 
