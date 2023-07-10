@@ -10,7 +10,7 @@
                     {
                         "id": "job1",
                         "job_name": "1 Data preparation",
-                        "job_id": "256ad058-b66e-48d1-b947-ac2701c9994d",
+                        "job_id": "38f6c947-ff53-405b-9e17-bc721f6154ab",
                         "next_nodes": [
                             "job2"
                         ],
