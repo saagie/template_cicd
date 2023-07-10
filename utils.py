@@ -192,12 +192,12 @@ def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env):
         graph_pipeline=graph_pipeline,
         description=pipeline_config["description"] if pipeline_config["description"] else "",
         release_note=pipeline_config["release_note"] if pipeline_config["release_note"] else "",
-        emails=pipeline_config["emails"] if pipeline_config["emails"] else "",
-        status_list=pipeline_config["status_list"] if pipeline_config["status_list"] else "",
-        is_scheduled=pipeline_config["is_scheduled"] if pipeline_config["is_scheduled"] else "",
-        cron_scheduling=pipeline_config["cron_scheduling"] if pipeline_config["cron_scheduling"] else "",
-        schedule_timezone=pipeline_config["schedule_timezone"] if pipeline_config["schedule_timezone"] else "",
-        has_execution_variables_enabled=pipeline_config["has_execution_variables_enabled"] if pipeline_config[
-            "has_execution_variables_enabled"] else "",
+        emails=pipeline_config["env"][env]["emails"] if pipeline_config["env"][env]["emails"] else "",
+        status_list=pipeline_config["env"][env]["status_list"] if pipeline_config["env"][env]["status_list"] else "",
+        is_scheduled=pipeline_config["env"][env]["is_scheduled"] if pipeline_config["env"][env]["is_scheduled"] else "",
+        cron_scheduling=pipeline_config["env"][env]["cron_scheduling"] if pipeline_config["env"][env]["cron_scheduling"] else "",
+        schedule_timezone=pipeline_config["env"][env]["schedule_timezone"] if pipeline_config["env"][env]["schedule_timezone"] else "",
+        has_execution_variables_enabled=pipeline_config["env"][env]["has_execution_variables_enabled"] if
+        pipeline_config["env"][env]["has_execution_variables_enabled"] else "",
     )
     return res

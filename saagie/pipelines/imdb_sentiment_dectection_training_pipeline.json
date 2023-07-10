@@ -17,7 +17,7 @@
           {
             "id": "job2",
             "job_name": "2 Clean data",
-            "job_id": "600f5622-3d34-4d09-9d2d-fb108ca2f794",
+            "job_id": "99394465-758c-43e8-969d-d584fd124209",
             "next_nodes": ["cond1"],
             "is_root_node": false
           },
@@ -74,7 +74,13 @@
           }
 
         ]
-      }
+      },
+      "emails": null,
+      "status_list": null,
+      "is_scheduled": null,
+      "cron_scheduling": null,
+      "schedule_timezone": "UTC",
+      "has_execution_variables_enabled": null
     },
     "prod": {
       "platform_id": "2",
@@ -149,15 +155,16 @@
           }
 
         ]
-      }
+      },
+      "emails": null,
+      "status_list": null,
+      "is_scheduled": null,
+      "cron_scheduling": null,
+      "schedule_timezone": "UTC",
+      "has_execution_variables_enabled": null
     }
   },
   "description": "Change description",
-  "release_note": "new release",
-  "emails": null,
-  "status_list": null,
-  "is_scheduled": null,
-  "cron_scheduling": null,
-  "schedule_timezone": "UTC",
-  "has_execution_variables_enabled": null
+  "release_note": "new release"
+
 }
