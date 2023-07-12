@@ -4,10 +4,12 @@
 This project contains an __example__ to use github action to deploy jobs inside Saagie Platform using
 [saagieapi](https://saagieapi.readthedocs.io/en/latest/).
 
-You can use the following actions to interact with Saagie platform: `package_job`, `update_job`, `run_job`, `update_pipeline`.
+You can use the following actions to interact with Saagie platform: `package_job`, `update_job`, `run_job`,
+`update_pipeline` and `run_pipeline`.
 Packaging only available for python package code.
 
 The `update_job` action depends on `package_job`, and the `run_job` action depends on `update_job` one.
+Same thing for `pipeline`.
 If you want to package the artefact yourself, you have change the function `create_or_upgrade_job` in `utils.py`.
 
 In this repository, we have 4 Python jobs and 2 Bash job.
