@@ -1,4 +1,4 @@
-## Import librairies
+# Import libraries
 import os
 import argparse
 import logging
