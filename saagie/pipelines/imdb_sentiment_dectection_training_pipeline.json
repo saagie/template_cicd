@@ -4,7 +4,7 @@
         "dev": {
             "platform_id": "1",
             "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "pipeline_id": "abdea6cf-5ce5-469b-8262-77698742e2e4",
+            "pipeline_id": "",
             "graph_pipeline": {
                 "job_nodes": [
                     {
@@ -19,7 +19,7 @@
                     {
                         "id": "job2",
                         "job_name": "2 Clean data",
-                        "job_id": "99394465-758c-43e8-969d-d584fd124209",
+                        "job_id": "86a3fb38-dc91-4d3c-9e82-e369542a843a",
                         "next_nodes": [
                             "cond1"
                         ],
