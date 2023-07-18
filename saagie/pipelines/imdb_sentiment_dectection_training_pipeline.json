@@ -99,7 +99,7 @@
         },
         "prod": {
             "platform_id": "2",
-            "pipeline_id": "",
+            "pipeline_id": "991784d9-0b96-4272-a91a-106e82c1f34a",
             "project_id": "947de7f2-e482-4668-8221-88149ada2e08",
             "graph_pipeline": {
                 "job_nodes": [
