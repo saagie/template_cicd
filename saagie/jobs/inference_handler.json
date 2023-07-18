@@ -24,7 +24,7 @@
         }
     },
     "job_name": "5 Inference handler",
-    "file_path": "../code/inference_handler",
+    "file_path": "code/inference_handler",
     "description": "",
     "category": "Processing",
     "technology": "python",

@@ -3,7 +3,7 @@
         "dev": {
             "platform_id": "1",
             "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "job_id": "99394465-758c-43e8-969d-d584fd124209",
+            "job_id": "86a3fb38-dc91-4d3c-9e82-e369542a843a",
             "is_scheduled": false,
             "cron_scheduling": null,
             "schedule_timezone": "UTC",
@@ -24,12 +24,12 @@
         }
     },
     "job_name": "2 Clean data",
-    "file_path": "../code/clean_data",
+    "file_path": "code/clean_data",
     "description": "new desciption",
     "category": "Processing",
     "technology": "python",
     "technology_catalog": "Saagie",
-    "runtime_version": "3.11",
+    "runtime_version": "3.8",
     "command_line": "python {file} --s3bucket_train_csv '/cleaned-data/train/' --s3bucket_test_csv '/cleaned-data/test/'",
     "release_note": "",
     "extra_technology": "",

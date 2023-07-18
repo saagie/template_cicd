@@ -24,7 +24,7 @@
         }
     },
     "job_name": "1 Data preparation",
-    "file_path": "../code/data_preparation",
+    "file_path": "code/data_preparation",
     "description": "",
     "category": "Processing",
     "technology": "python",
