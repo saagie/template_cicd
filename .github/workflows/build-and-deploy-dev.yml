@@ -7,6 +7,9 @@ on:
       - '**'        # matches every branch
       - '!main'   # excludes main
 
+env:
+  CI_COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
