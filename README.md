@@ -198,10 +198,6 @@ Type: `object`
   - _Command line of the job_
   - Type: `string`
   - Example: `python {file}`
-- **_release_note_**
-  - _Release note of the job_
-  - Type: `string`
-  - Example: `This is my release note`
 - **_extra_technology_**
   - _Extra technology when needed (spark jobs). If not needed, leave to
     empty string or the request will not work_
@@ -316,10 +312,10 @@ Type: `object`
         - Example:  `True`
 
 - **_description_**
-  - _Description for your job_
+  - _Description for your pipeline_
   - Type: `string`
   - Example: `This is my description`
 - **_release_note_**
-  - _Release note of the job_
+  - _Release note of the pipeline_
   - Type: `string`
   - Example: `This is my release note`

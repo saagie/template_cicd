@@ -31,7 +31,6 @@
     "technology_catalog": "Saagie",
     "runtime_version": "debian12-bookworm",
     "command_line": "echo 'ERROR'",
-    "release_note": "to prod",
     "extra_technology": "",
     "extra_technology_version": ""
 }
