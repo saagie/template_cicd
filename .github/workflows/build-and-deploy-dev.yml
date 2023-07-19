@@ -8,7 +8,7 @@ on:
       - '!main'   # excludes main
 
 env:
-  CI_COMMIT_MESSAGE: ${{ github.event.workflow_run.head_commit.message }}
+  CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
 jobs:
   build:

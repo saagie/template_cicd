@@ -50,7 +50,7 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
     file_path = os.path.abspath(job_config_file)
     release_note = "WIP"
     if "CI" in os.environ:
-        release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/-/commit/{os.environ['GITHUB_SHA']}"
+        release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
     job_config["release_note"] = release_note
 
     output_zip = package_code(f"./dist/{job_config['job_name']}", job_config["file_path"])
