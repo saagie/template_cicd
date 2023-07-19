@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - 'main'        # matches only main
+env:
+  CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
 jobs:
   build:
