@@ -25,7 +25,7 @@
     },
     "job_name": "Error handling",
     "file_path": "",
-    "description": "",
+    "description": "error printing",
     "category": "Processing",
     "technology": "bash",
     "technology_catalog": "Saagie",
