@@ -4,7 +4,7 @@
         "dev": {
             "platform_id": "1",
             "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "pipeline_id": "",
+            "pipeline_id": "004ba7d2-b858-4c16-9f1d-7f2dd2593f8e",
             "graph_pipeline": {
                 "job_nodes": [
                     {
