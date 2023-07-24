@@ -4,7 +4,7 @@
         "dev": {
             "platform_id": "1",
             "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "pipeline_id": "002f5007-bbcc-4905-9763-c6540676ab3a",
+            "pipeline_id": "",
             "graph_pipeline": {
                 "job_nodes": [
                     {
@@ -37,7 +37,7 @@
                     {
                         "id": "job4",
                         "job_name": "4 Model deployment",
-                        "job_id": "c308b152-e12e-4d74-bbe7-dbae9bb1ac2c",
+                        "job_id": "c50adeb8-055c-4705-9e9e-7d5ba4522e2d",
                         "next_nodes": [
                             "job5"
                         ],
