@@ -27,36 +27,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-        id: extract_branch
-
-
-#      - name: Finding files and store to output
-#        id: finding-files
-#        run: |
-#          echo "::set-output name=FILELIST::$(find . -name 'saagie/jobs/*.json' -o -name 'saagie/pipelines/*.json' -print)"
-#
-#      - name: Check file changes and do update
-#        uses: dorny/paths-filter@v2
-#        run: |
-#          IFS="," read -a myarray <<< ${{ steps.finding-files.outputs.FILELIST }}
-#          for i in "${myarray[@]}"; do
-#            file_path=$(dirname "${i}")
-#            file_name=$(basename "${i}")
-#          done
-#        with:
-#          base: ${{ steps.extract_branch.outputs.branch }}
-#          filters:
-#
-#
-#          |
-#            clean_data:
-#              - 'code/clean_data/*'
-#              - 'saagie/jobs/clean_data.json'
-#          list-files: 'json'
-
       - name: Get specific changed files
         id: changed-files-specific
         uses: tj-actions/changed-files@v37
@@ -72,6 +42,9 @@ jobs:
         run: |
           for file in ${{ steps.changed-files-specific.outputs.jobs_all_changed_files }}; do
             echo "$file was modified"
+            file_name=$(basename ${file})
+            file_name_without_ext=${file_name%.*}
+            python __main__.py --action update_job --job_name ${file_name_without_ext} --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
           done
 
       - name: Run step if any of the pipelines files above change
@@ -79,6 +52,10 @@ jobs:
         run: |
           for file in ${{ steps.changed-files-specific.outputs.pipelines_all_changed_files }}; do
             echo "$file was modified"
+            file_name=$(basename ${file})
+            file_name_without_ext=${file_name%.*}
+            python __main__.py --action update_pipeline --pipeline_name ${file_name_without_ext} --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env dev
+          
           done
 
 #      - name: Check file changes
