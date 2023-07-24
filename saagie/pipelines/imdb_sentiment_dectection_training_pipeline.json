@@ -195,5 +195,5 @@
         }
     },
     "description": "Change description",
-    "release_note": "new release"
+    "release_note": "new release using github action"
 }
