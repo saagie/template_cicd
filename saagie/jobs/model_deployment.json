@@ -25,7 +25,7 @@
     },
     "job_name": "4 Model deployment",
     "file_path": "",
-    "description": "deploy model",
+    "description": "deploy model 1",
     "category": "Processing",
     "technology": "bash",
     "technology_catalog": "Saagie",
