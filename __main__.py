@@ -33,7 +33,7 @@ def main():
             job_config = json.load(f)
 
     if args.action == "package_job":
-        utils.package_code(f"./dist/{args.job_name}", job_config["file_path"])
+        utils.package_code(f"./dist/{job_config['job_name']}", job_config["file_path"])
         logging.info(f"Successfully package job: [{args.job_name}]")
 
     if args.action == "update_job":

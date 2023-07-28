@@ -53,7 +53,7 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
         release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
     job_config["release_note"] = release_note
 
-    output_zip = package_code(f"./dist/{job_config['job_name']}", job_config["file_path"])
+    output_zip = f"/dist/{job_config['job_name']}.zip" if job_config["file_path"] else None
     res = client_saagie.jobs.create_or_upgrade(
         job_name=job_config["job_name"],
         project_id=job_config["env"][env]["project_id"],
