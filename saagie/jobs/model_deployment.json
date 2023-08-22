@@ -1,28 +1,4 @@
 {
-    "env": {
-        "dev": {
-            "platform_id": "1",
-            "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "job_id": "c50adeb8-055c-4705-9e9e-7d5ba4522e2d",
-            "is_scheduled": false,
-            "cron_scheduling": null,
-            "schedule_timezone": "UTC",
-            "resources": null,
-            "emails": null,
-            "status_list": null
-        },
-        "prod": {
-            "platform_id": "2",
-            "job_id": "a0b2e299-093f-4c1f-9489-62f8f9c971c7",
-            "project_id": "947de7f2-e482-4668-8221-88149ada2e08",
-            "is_scheduled": false,
-            "cron_scheduling": null,
-            "schedule_timezone": "UTC",
-            "resources": null,
-            "emails": null,
-            "status_list": null
-        }
-    },
     "job_name": "4 Model deployment",
     "file_path": "",
     "description": "deploy model 1",

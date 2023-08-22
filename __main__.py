@@ -28,17 +28,25 @@ def main():
                         help="Saagie environment", required=False, default="dev")
 
     args = parser.parse_args()
+    # Retrieving environment config
+    with open(f"saagie/envs/{args.saagie_env}.json", "r") as f:
+        env_config = json.load(f)
+
+    # Retrieving job config
     if "job" in args.action:
         with open(f"saagie/jobs/{args.job_name}.json", "r") as f:
             job_config = json.load(f)
 
     if args.action == "package_job":
-        utils.package_code(f"./dist/{job_config['job_name']}", job_config["file_path"])
-        logging.info(f"Successfully package job: [{args.job_name}]")
+        if job_config["file_path"]:
+            utils.package_code(f"./dist/{job_config['job_name']}", f"./code/{args.job_name}")
+            logging.info(f"Successfully package job: [{args.job_name}]")
+        else:
+            logging.info(f"There is no corresponding artefact path for the job: [{args.job_name}]")
 
     if args.action == "update_job":
         client_saagie = utils.connect_to_saagie(args.saagie_url,
-                                                job_config["env"][args.saagie_env]["platform_id"],
+                                                env_config["platform_id"],
                                                 args.saagie_user,
                                                 args.saagie_pwd,
                                                 args.saagie_realm)
@@ -46,17 +54,15 @@ def main():
 
     if args.action == "run_job":
         client_saagie = utils.connect_to_saagie(args.saagie_url,
-                                                job_config["env"][args.saagie_env]["platform_id"],
+                                                env_config["platform_id"],
                                                 args.saagie_user,
                                                 args.saagie_pwd,
                                                 args.saagie_realm)
         utils.run_job(client_saagie, f"saagie/jobs/{args.job_name}.json", args.saagie_env)
 
     if args.action == "update_pipeline":
-        with open(f"saagie/pipelines/{args.pipeline_name}.json", "r") as f:
-            pipeline_config = json.load(f)
         client_saagie = utils.connect_to_saagie(args.saagie_url,
-                                                pipeline_config["env"][args.saagie_env]["platform_id"],
+                                                env_config["platform_id"],
                                                 args.saagie_user,
                                                 args.saagie_pwd,
                                                 args.saagie_realm)
@@ -64,10 +70,8 @@ def main():
                                                f"saagie/pipelines/{args.pipeline_name}.json",
                                                args.saagie_env)
     if args.action == "run_pipeline":
-        with open(f"saagie/pipelines/{args.pipeline_name}.json", "r") as f:
-            pipeline_config = json.load(f)
         client_saagie = utils.connect_to_saagie(args.saagie_url,
-                                                pipeline_config["env"][args.saagie_env]["platform_id"],
+                                                env_config["platform_id"],
                                                 args.saagie_user,
                                                 args.saagie_pwd,
                                                 args.saagie_realm)

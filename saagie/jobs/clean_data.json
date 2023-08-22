@@ -1,30 +1,6 @@
 {
-    "env": {
-        "dev": {
-            "platform_id": "1",
-            "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "job_id": "86a3fb38-dc91-4d3c-9e82-e369542a843a",
-            "is_scheduled": false,
-            "cron_scheduling": null,
-            "schedule_timezone": "UTC",
-            "resources": null,
-            "emails": null,
-            "status_list": null
-        },
-        "prod": {
-            "platform_id": "2",
-            "job_id": "b651e4c1-ba24-46a6-a803-d67cb26aca39",
-            "project_id": "947de7f2-e482-4668-8221-88149ada2e08",
-            "is_scheduled": false,
-            "cron_scheduling": null,
-            "schedule_timezone": "UTC",
-            "resources": null,
-            "emails": null,
-            "status_list": null
-        }
-    },
     "job_name": "2 Clean data",
-    "file_path": "code/clean_data",
+    "file_path": "dist/2 Clean data.zip",
     "description": "new test 4",
     "category": "Processing",
     "technology": "python",

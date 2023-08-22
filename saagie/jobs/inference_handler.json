@@ -1,30 +1,6 @@
 {
-    "env": {
-        "dev": {
-            "platform_id": "1",
-            "project_id": "a0295a5b-40db-410e-994f-3096ff7c7397",
-            "job_id": "12abe0d3-398b-4bd3-9635-128620047902",
-            "is_scheduled": false,
-            "cron_scheduling": null,
-            "schedule_timezone": "UTC",
-            "resources": null,
-            "emails": null,
-            "status_list": null
-        },
-        "prod": {
-            "platform_id": "2",
-            "job_id": "e5056f70-9fe7-49f6-bc7c-2317b832d549",
-            "project_id": "947de7f2-e482-4668-8221-88149ada2e08",
-            "is_scheduled": false,
-            "cron_scheduling": null,
-            "schedule_timezone": "UTC",
-            "resources": null,
-            "emails": null,
-            "status_list": null
-        }
-    },
     "job_name": "5 Inference handler",
-    "file_path": "code/inference_handler",
+    "file_path": "dist/5 Inference handler.zip",
     "description": "",
     "category": "Processing",
     "technology": "python",
