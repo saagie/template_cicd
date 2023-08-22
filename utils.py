@@ -67,8 +67,8 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
         runtime_version=job_config["runtime_version"] if "runtime_version" in job_config and bool(job_config["runtime_version"]) else None,
         command_line=job_config["command_line"] if "command_line" in job_config and bool(job_config["command_line"]) else None,
         release_note=release_note,
-        extra_technology=job_config["extra_technology"] if "extra_technology" in job_config and bool(job_config["extra_technology"]) else None,
-        extra_technology_version=job_config["extra_technology_version"] if "extra_technology_version" in job_config and bool(job_config["extra_technology_version"]) else None
+        extra_technology=job_config["extra_technology"] if "extra_technology" in job_config else None,
+        extra_technology_version=job_config["extra_technology_version"] if "extra_technology_version" in job_config else None
     )
     return res
 
