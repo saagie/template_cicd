@@ -182,7 +182,7 @@ Type: `object`
   - **_environment_name_** `required`
     - _Group all variables needed by each environment inside one dict_
     - Type: `object`
-    - Example: ```"dev": {"platform_id": "your_platform_id", "project_id": "your_project_id", "graph_pipeline": {"job_nodes": [], "condition_nodes": []}}```
+    - Example: ```"dev": {"graph_pipeline": {"job_nodes": [], "condition_nodes": []}}```
     - **_Properties_**:
       - **_graph_pipeline_**
         - _Graph pipeline_
