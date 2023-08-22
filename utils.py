@@ -161,9 +161,9 @@ def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env):
         project_id=env_config["project_id"],
         graph_pipeline=graph_pipeline,
         release_note=release_note,
-        description=pipeline_config["description"] if "description" in pipeline_config else None,
+        description=pipeline_config["description"] if "description" in pipeline_config  and bool(pipeline_config["description"])else None,
         has_execution_variables_enabled=pipeline_config["has_execution_variables_enabled"] if
-        "has_execution_variables_enabled" in pipeline_config and bool(pipeline_config["has_execution_variables_enabled"]) else "",
+        "has_execution_variables_enabled" in pipeline_config and bool(pipeline_config["has_execution_variables_enabled"]) else None,
     )
     return res
 
