@@ -105,7 +105,7 @@
                         "job_name": "3 Train model",
                         "job_id": "a4571691-3c87-4073-8e99-97618abecc3c",
                         "next_nodes": [
-                            "cond2"
+                            "f3729b1b-e5bd-4482-a1a5-dda5bdcfef98"
                         ]
                     },
                     {

@@ -55,22 +55,20 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
     release_note = "WIP"
     if "CI" in os.environ:
         release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
-    job_config["release_note"] = release_note
 
     res = client_saagie.jobs.create_or_upgrade(
         job_name=job_config["job_name"],
         project_id=env_config["project_id"],
-        file=job_config["file_path"] if job_config["file_path"] else None,
-        description=job_config["description"] if job_config["description"] else "",
-        category=job_config["category"],
-        technology=job_config["technology"],
-        technology_catalog=job_config["technology_catalog"],
-        runtime_version=job_config["runtime_version"],
-        command_line=job_config["command_line"],
-        release_note=job_config["release_note"] if job_config["release_note"] else "",
-        extra_technology=job_config["extra_technology"] if job_config["extra_technology"] else "",
-        extra_technology_version=job_config["extra_technology_version"] if job_config[
-            "extra_technology_version"] else ""
+        file=job_config["file_path"] if "file_path" in job_config and bool(job_config["file_path"]) else None,
+        description=job_config["description"] if "description" in job_config else "",
+        category=job_config["category"] if "category" in job_config else "",
+        technology=job_config["technology"] if "technology" in job_config else "",
+        technology_catalog=job_config["technology_catalog"] if "technology_catalog" in job_config else "",
+        runtime_version=job_config["runtime_version"] if "runtime_version" in job_config and bool(job_config["runtime_version"]) else None,
+        command_line=job_config["command_line"] if "command_line" in job_config and bool(job_config["command_line"]) else None,
+        release_note=release_note,
+        extra_technology=job_config["extra_technology"] if "extra_technology" in job_config and bool(job_config["extra_technology"]) else None,
+        extra_technology_version=job_config["extra_technology_version"] if "extra_technology_version" in job_config and bool(job_config["extra_technology_version"]) else None
     )
     return res
 
@@ -154,15 +152,18 @@ def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env):
         env_config = json.load(f)
 
     graph_pipeline = create_graph(pipeline_config_file, env)
+    release_note = "WIP"
+    if "CI" in os.environ:
+        release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
 
     res = client_saagie.pipelines.create_or_upgrade(
         name=pipeline_config["pipeline_name"],
         project_id=env_config["project_id"],
         graph_pipeline=graph_pipeline,
-        description=pipeline_config["description"] if pipeline_config["description"] else "",
-        release_note=pipeline_config["release_note"] if pipeline_config["release_note"] else "",
+        release_note=release_note,
+        description=pipeline_config["description"] if "description" in pipeline_config else None,
         has_execution_variables_enabled=pipeline_config["has_execution_variables_enabled"] if
-        pipeline_config["has_execution_variables_enabled"] else "",
+        "has_execution_variables_enabled" in pipeline_config and bool(pipeline_config["has_execution_variables_enabled"]) else "",
     )
     return res
 
