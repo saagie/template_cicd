@@ -8,6 +8,5 @@
     "runtime_version": "debian12-bookworm",
     "command_line": "EXP=$MLFLOW_EXP_NAME\nMETRIC1='metrics.Best_val_f1'\nMOD1='CommentCLF1'\nMETRIC2='metrics.Val_f1_weighted'\nMOD2='CommentCLF2'\n\necho \"Case 1. Deploy the best model \"$MOD1\" by \"$METRIC1\" of exp \"$EXP\ncurl -H \"Accept: application/json\" -H \"Content-type: application/json\" -X POST -d '{\"exp\":\"'$EXP'\", \"metric\":\"'$METRIC1'\", \"model_name\":\"'$MOD1'\"}' $MLFLASK_URL\"/deploy\"\n\necho \"Case 2. Deploy the best model \"$MOD2\" by \"$METRIC2\" of exp \"$EXP\ncurl -H \"Accept: application/json\" -H \"Content-type: application/json\" -X POST -d '{\"exp\":\"'$EXP'\", \"metric\":\"'$METRIC2'\", \"model_name\":\"'$MOD2'\"}' $MLFLASK_URL\"/deploy\"\n\necho \"Case 3. Remove the model having name \"$MOD2\ncurl -H \"Content-Type: application/json\" -X POST -d '{\"model_name\":\"'$MOD2'\"}' $MLFLASK_URL\"/remove\"",
     "extra_technology": "",
-    "extra_technology_version": "",
-    "release_note": "create bash job with new github action - https://github.com/Qiwei08/test_cicd_python/commit/d7abd8a2078bb8004e26154bf06d189caef6a469"
+    "extra_technology_version": ""
 }

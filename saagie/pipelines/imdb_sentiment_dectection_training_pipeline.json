@@ -97,7 +97,7 @@
                         "job_name": "2 Clean data",
                         "job_id": "b651e4c1-ba24-46a6-a803-d67cb26aca39",
                         "next_nodes": [
-                            "cond1"
+                            "ac9ca371-c007-4e94-b1ee-22b605129c71"
                         ]
                     },
                     {
