@@ -1,3 +1,5 @@
+import logging
+
 from saagieapi import SaagieApi, GraphPipeline, ConditionNode, JobNode, ConditionStatusNode, ConditionExpressionNode
 import json
 import shutil
@@ -47,49 +49,45 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
     """
     with open(job_config_file, "r") as f:
         job_config = json.load(f)
-    file_path = os.path.abspath(job_config_file)
+    with open(f"./saagie/envs/{env}.json", "r") as f:
+        env_config = json.load(f)
 
-    output_zip = package_code(f"./dist/{job_config['job_name']}", job_config["file_path"])
+    release_note = "WIP"
+    if "CI" in os.environ:
+        release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
+
     res = client_saagie.jobs.create_or_upgrade(
         job_name=job_config["job_name"],
-        project_id=job_config["env"][env]["project_id"],
-        file=output_zip,
-        description=job_config["description"] if job_config["description"] else "",
-        category=job_config["category"],
-        technology=job_config["technology"],
-        technology_catalog=job_config["technology_catalog"],
-        runtime_version=job_config["runtime_version"],
-        command_line=job_config["command_line"],
-        release_note=job_config["release_note"] if job_config["release_note"] else "",
-        extra_technology=job_config["extra_technology"] if job_config["extra_technology"] else "",
-        extra_technology_version=job_config["extra_technology_version"] if job_config[
-            "extra_technology_version"] else "",
-        is_scheduled=job_config["env"][env]["is_scheduled"] if job_config["env"][env]["is_scheduled"] else False,
-        cron_scheduling=job_config["env"][env]["cron_scheduling"] if job_config["env"][env]["cron_scheduling"] else None,
-        schedule_timezone=job_config["env"][env]["schedule_timezone"] if job_config["env"][env]["schedule_timezone"] else "UTC",
-        resources=job_config["env"][env]["resources"] if job_config["env"][env]["resources"] else None,
-        emails=job_config["env"][env]["emails"] if job_config["env"][env]["emails"] else None,
-        status_list=job_config["env"][env]["status_list"] if job_config["env"][env]["status_list"] else None
+        project_id=env_config["project_id"],
+        file=job_config["file_path"] if "file_path" in job_config and bool(job_config["file_path"]) else None,
+        description=job_config["description"] if "description" in job_config else "",
+        category=job_config["category"] if "category" in job_config else "",
+        technology=job_config["technology"] if "technology" in job_config else "",
+        technology_catalog=job_config["technology_catalog"] if "technology_catalog" in job_config else "",
+        runtime_version=job_config["runtime_version"] if "runtime_version" in job_config and bool(job_config["runtime_version"]) else None,
+        command_line=job_config["command_line"] if "command_line" in job_config and bool(job_config["command_line"]) else None,
+        release_note=release_note,
+        extra_technology=job_config["extra_technology"] if "extra_technology" in job_config and bool(job_config["extra_technology"]) else None,
+        extra_technology_version=job_config["extra_technology_version"] if "extra_technology_version" in job_config and bool(job_config["extra_technology_version"]) else None
     )
-    if "data" in res.keys():
-        job_config["env"][env]["job_id"] = res["data"]["createJob"]["id"]
-        with open(file_path, "w") as f:
-            json.dump(job_config, f, indent=4)
     return res
 
 
 def run_job(client_saagie, job_config_file, env):
     """
-    Package code, then create or upgrade a job on Saagie, and finally run it
+    Run a job on Saagie
     :param client_saagie: SaagieAPI, an instance of SaagieAP
     :param job_config_file: str, job config file path
     :param env: str, environment of Saagie that you want to create or upgrade job
     :return: dict, dict of job instance ID and status
     """
-    create_or_upgrade_job(client_saagie, job_config_file, env)
     with open(job_config_file, "r") as f:
         job_config = json.load(f)
-    return client_saagie.jobs.run(job_config["env"][env]["job_id"])
+    with open(f"./saagie/envs/{env}.json", "r") as f:
+        env_config = json.load(f)
+    job_id = client_saagie.jobs.get_id(job_config["job_name"], env_config["project_name"])
+    logging.info("Job ID: " + job_id)
+    return client_saagie.jobs.run(job_id)
 
 
 def create_graph(pipeline_config_file, env):
@@ -102,74 +100,41 @@ def create_graph(pipeline_config_file, env):
     with open(pipeline_config_file, "r") as f:
         pipeline_config = json.load(f)
     pipeline_info = pipeline_config["env"][env]["graph_pipeline"]
-    has_next_nodes = set()
-    job_nodes = {}
-    condition_nodes = {}
     graph_pipeline = GraphPipeline()
+    list_job_nodes = []
+    list_condition_nodes = []
 
     # Find all job nodes
     for i in range(len(pipeline_info["job_nodes"])):
         job_node_info = pipeline_info["job_nodes"][i]
-        job_tmp = JobNode(job_node_info["job_id"])
 
-        job_uid = job_node_info["id"]
-        job_nodes[job_uid] = {}
-        job_nodes[job_uid]["node"] = job_tmp
-        if job_node_info["is_root_node"]:
-            graph_pipeline.add_root_node(job_tmp)
-        if job_node_info["next_nodes"]:
-            job_nodes[job_uid]["next_nodes_ids"] = job_node_info["next_nodes"]
-            has_next_nodes.add(job_uid)
+        node_dict = {
+            "id": job_node_info["id"],
+            "job": {"id": job_node_info["job_id"]},
+            "nextNodes": job_node_info["next_nodes"],
+        }
+        list_job_nodes.append(node_dict)
 
     # Find all condition nodes
     for i in range(len(pipeline_info["condition_nodes"])):
         condition_node_info = pipeline_info["condition_nodes"][i]
-        condition_id = condition_node_info["condition_id"]
-        condition_nodes[condition_id] = {}
+
+        condition_dict = {
+            "id": condition_node_info["id"],
+            "nextNodesSuccess": condition_node_info["next_nodes_success"],
+            "nextNodesFailure": condition_node_info["next_nodes_failure"],
+        }
         if condition_node_info["condition_type"] == "status":
-            condition_nodes[condition_id]["node"] = ConditionStatusNode()
-            if condition_node_info["value"].upper() == "ALLSUCCESS":
-                condition_nodes[condition_id]["node"].put_all_success()
-            if condition_node_info["value"].upper() == "ALLSUCCESSORSKIPPED":
-                condition_nodes[condition_id]["node"].put_all_success_or_skipped()
-            if condition_node_info["value"].upper() == "ATLEASTONESUCCESS":
-                condition_nodes[condition_id]["node"].put_at_least_one_success()
+            condition_dict["condition"] = {
+                "status": {"value": condition_node_info["value"]}
+            }
         elif condition_node_info["condition_type"] == "expression":
-            condition_nodes[condition_id]["node"] = ConditionExpressionNode()
-            if condition_node_info["value"]:
-                condition_nodes[condition_id]["node"].set_expression(condition_node_info["value"])
-        else:
-            condition_nodes[condition_id]["node"] = ConditionNode()
-        if condition_node_info["next_nodes_success"]:
-            condition_nodes[condition_id]["next_nodes_success_ids"] = condition_node_info["next_nodes_success"]
-            has_next_nodes.add(condition_id)
-        if condition_node_info["next_nodes_failure"]:
-            condition_nodes[condition_id]["next_nodes_failure"] = condition_node_info["next_nodes_failure"]
-            has_next_nodes.add(condition_id)
-
-    # Add next nodes
-    for node_id in has_next_nodes:
-        if node_id in job_nodes.keys():
-            job_node_tmp = job_nodes[node_id]["node"]
-            for next_node in job_nodes[node_id]["next_nodes_ids"]:
-                if next_node in job_nodes.keys():
-                    job_node_tmp.add_next_node(job_nodes[next_node]["node"])
-                if next_node in condition_nodes.keys():
-                    job_node_tmp.add_next_node(condition_nodes[next_node]["node"])
-        if node_id in condition_nodes.keys():
-            condition_node_tmp = condition_nodes[node_id]["node"]
-            if condition_nodes[node_id]["next_nodes_success_ids"]:
-                for next_node in condition_nodes[node_id]["next_nodes_success_ids"]:
-                    if next_node in job_nodes.keys():
-                        condition_node_tmp.add_success_node(job_nodes[next_node]["node"])
-                    if next_node in condition_nodes.keys():
-                        condition_node_tmp.add_success_node(condition_nodes[next_node]["node"])
-                for next_node in condition_nodes[node_id]["next_nodes_failure"]:
-                    if next_node in job_nodes.keys():
-                        condition_node_tmp.add_failure_node(job_nodes[next_node]["node"])
-                    if next_node in condition_nodes.keys():
-                        condition_node_tmp.add_failure_node(condition_nodes[next_node]["node"])
-
+            condition_dict["condition"] = {
+                "custom": {"expression": condition_node_info["value"]}
+            }
+        list_condition_nodes.append(condition_dict)
+    graph_pipeline.list_job_nodes = list_job_nodes
+    graph_pipeline.list_conditions_nodes = list_condition_nodes
     return graph_pipeline
 
 
@@ -183,39 +148,38 @@ def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env):
     """
     with open(pipeline_config_file, "r") as f:
         pipeline_config = json.load(f)
+    with open(f"./saagie/envs/{env}.json", "r") as f:
+        env_config = json.load(f)
 
     graph_pipeline = create_graph(pipeline_config_file, env)
+    release_note = "WIP"
+    if "CI" in os.environ:
+        release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
 
     res = client_saagie.pipelines.create_or_upgrade(
         name=pipeline_config["pipeline_name"],
-        project_id=pipeline_config["env"][env]["project_id"],
+        project_id=env_config["project_id"],
         graph_pipeline=graph_pipeline,
-        description=pipeline_config["description"] if pipeline_config["description"] else "",
-        release_note=pipeline_config["release_note"] if pipeline_config["release_note"] else "",
-        emails=pipeline_config["env"][env]["emails"] if pipeline_config["env"][env]["emails"] else "",
-        status_list=pipeline_config["env"][env]["status_list"] if pipeline_config["env"][env]["status_list"] else "",
-        is_scheduled=pipeline_config["env"][env]["is_scheduled"] if pipeline_config["env"][env]["is_scheduled"] else "",
-        cron_scheduling=pipeline_config["env"][env]["cron_scheduling"] if pipeline_config["env"][env]["cron_scheduling"] else "",
-        schedule_timezone=pipeline_config["env"][env]["schedule_timezone"] if pipeline_config["env"][env]["schedule_timezone"] else "",
-        has_execution_variables_enabled=pipeline_config["env"][env]["has_execution_variables_enabled"] if
-        pipeline_config["env"][env]["has_execution_variables_enabled"] else "",
+        release_note=release_note,
+        description=pipeline_config["description"] if "description" in pipeline_config  and bool(pipeline_config["description"])else None,
+        has_execution_variables_enabled=pipeline_config["has_execution_variables_enabled"] if
+        "has_execution_variables_enabled" in pipeline_config and bool(pipeline_config["has_execution_variables_enabled"]) else None,
     )
-    if "createGraphPipeline" in res.keys():
-        pipeline_config["env"][env]["pipeline_id"] = res["createGraphPipeline"]["id"]
-        with open(pipeline_config_file, "w") as f:
-            json.dump(pipeline_config, f, indent=4)
     return res
 
 
 def run_pipeline(client_saagie, pipeline_config_file, env):
     """
-    Create or upgrade a pipeline on Saagie, and finally run it
+    Run a pipeline on Saagie
     :param client_saagie: SaagieAPI, an instance of SaagieAP
     :param pipeline_config_file: str, pipeline config file path
     :param env: str, environment of Saagie that you want to create or upgrade job
     :return: dict, dict of job instance ID and status
     """
-    create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env)
     with open(pipeline_config_file, "r") as f:
         pipeline_config = json.load(f)
-    return client_saagie.pipelines.run(pipeline_config["env"][env]["pipeline_id"])
+    with open(f"./saagie/envs/{env}.json", "r") as f:
+        env_config = json.load(f)
+    pipeline_id = client_saagie.pipelines.get_id(project_name=env_config["project_name"], pipeline_name=pipeline_config["pipeline_name"])
+    logging.info("Pipeline ID: " + pipeline_id)
+    return client_saagie.pipelines.run(pipeline_id)

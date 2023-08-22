@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - 'main'        # matches only main
+env:
+  CI_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
 
 jobs:
   build:
@@ -23,56 +25,36 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Extract branch name
-        shell: bash
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-        id: extract_branch
-
-      - name: Check file changes
-        uses: dorny/paths-filter@v2
-        id: changes
+      - name: Get specific changed files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v37
         with:
-          base: ${{ steps.extract_branch.outputs.branch }}
-          filters: |
-            clean_data:
-              - 'code/clean_data/*'
-              - 'saagie/jobs/clean_data.json'
-            data_preparation:
-              - 'code/data_preparation/*'
-              - 'saagie/jobs/data_preparation.json'
-            train_model:
-              - 'code/train_model/*'
-              - 'saagie/jobs/train_model.json'
-            model_deployment:
-              - 'saagie/jobs/model_deployment.json'
-            inference_handler:
-              - 'code/inference_handler/*'
-              - 'saagie/jobs/inference_handler.json'
-            error_handling:
-              - 'saagie/jobs/error_handling.json'
-            imdb_pipeline:
-              - 'saagie/pipelines/imdb_sentiment_dectection_training_pipeline.json'
-      - name: Update data preparation job
-        if: steps.changes.outputs.data_preparation == 'true'
-        run: python __main__.py --action update_job --job_name data_preparation --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env prod
-      - name: Update clean data job
-        if: steps.changes.outputs.clean_data == 'true'
-        run: python __main__.py --action update_job --job_name clean_data --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env prod
-      - name: Update train model job
-        if: steps.changes.outputs.train_model == 'true'
-        run: python __main__.py --action update_job --job_name train_model --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env prod
-      - name: Update model deployment job
-        if: steps.changes.outputs.model_deployment == 'true'
-        run: python __main__.py --action update_job --job_name model_deployment --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env prod
-      - name: Update inference handler job
-        if: steps.changes.outputs.inference_handler == 'true'
-        run: python __main__.py --action update_job --job_name inference_handler --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env prod
-      - name: Update error handling job
-        if: steps.changes.outputs.error_handling == 'true'
-        run: python __main__.py --action update_job --job_name error_handling --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env prod
-      - name: Update imdb sentiment detection pipeline
-        if: steps.changes.outputs.imdb_pipeline == 'true'
-        run: python __main__.py --action update_pipeline --pipeline_name imdb_sentiment_dectection_training_pipeline --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env prod
+          files_yaml: |
+            jobs:
+              - saagie/jobs/*.json
+            pipelines:
+              - saagie/pipelines/*.json
+
+      - name: Run step if any of the jobs files above change
+        if: steps.changed-files-specific.outputs.jobs_any_changed == 'true'
+        run: |
+          for file in ${{ steps.changed-files-specific.outputs.jobs_all_changed_files }}; do
+            echo "$file was modified"
+            file_name=$(basename ${file})
+            file_name_without_ext=${file_name%.*}
+            python __main__.py --action package_job --job_name ${file_name_without_ext}
+            python __main__.py --action update_job --job_name ${file_name_without_ext} --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env prod
+          done
+
+      - name: Run step if any of the pipelines files above change
+        if: steps.changed-files-specific.outputs.pipelines_any_changed == 'true'
+        run: |
+          for file in ${{ steps.changed-files-specific.outputs.pipelines_all_changed_files }}; do
+            echo "$file was modified"
+            file_name=$(basename ${file})
+            file_name_without_ext=${file_name%.*}
+            python __main__.py --action update_pipeline --pipeline_name ${file_name_without_ext} --saagie_url ${{secrets.SAAGIE_URL}} --saagie_user ${{secrets.SAAGIE_USER}} --saagie_pwd ${{secrets.SAAGIE_PWD}} --saagie_realm ${{secrets.SAAGIE_REALM}} --saagie_env prod
+          done
 
       - name: commit and push
         uses: oleksiyrudenko/gha-git-credentials@v2-latest
