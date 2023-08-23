@@ -22,8 +22,9 @@ we don't need to create a zip for bash job.
 - You have to create at least one project in Saagie Platform (in the example, we have one in `dev`,
   another in `prod`)
 - git clone this repo
-- Change `project_id` value inside all json file at `/saagie/jobs/`
-- Remove the value of `job_id` for all json file at `/saagie/jobs/`
+- If you have only one environment in Saagie, you can remove the `dev` directory inside `saagie/envs/`
+- Then, Change `project_id` value inside the json file at `/saagie/envs/prod.json`
+- Change also `project_name` value inside the json file at `/saagie/envs/prod.json`
 
 ### Local prerequisite
 
