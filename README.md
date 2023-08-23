@@ -143,11 +143,11 @@ Type: `object`
   - Type: `string`
   - Must be `Extraction`, `Processing` or `Smart App`
 - **_technology_** `optional`
-  - _Technology label of the job, If not filled or not present, defaults to current value_
+  - _Technology label of the job. Only required for the creation, and it's not possible to change this value for a job_
   - Type: `string`
   - Example: `Python`
 - **_technology_catalog_** `optional`
-  - _Technology catalog containing the technology to use for this job, If not filled or not present, defaults to current value_
+  - _Technology catalog containing the technology to use for this job. Only required for the creation, and it's not possible to change this value for a job_
   - Type: `string`
   - Example: `Saagie`
 - **_runtime_version_** `optional`
