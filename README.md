@@ -133,7 +133,7 @@ Type: `object`
 - **_file_path_** `required`
   - _File path of the code_
   - Type: `string`
-  - Example: `./code/data_preparation`
+  - Example: `./path/to/code/artefact.zip`
 - **_description_** `optional`
   - _Description for your job. If not filled or not present, defaults to current value_
   - Type: `string`
