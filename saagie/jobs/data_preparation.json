@@ -1,6 +1,6 @@
 {
     "job_name": "1 Data preparation",
-    "file_path": "dist/1 Data preparation.zip",
+    "file_path": "dist/data_preparation/data_preparation.zip",
     "description": "",
     "category": "Processing",
     "technology": "python",

@@ -71,31 +71,31 @@ been modified. Based on this, it will trigger actions such as updating a job, or
 It suppose that your job code is in `code/your_job_name`
 - To update a job,
   * For windows user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-    `python __main__.py --action update_job --job_name your_job_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_USER% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env your_env_name`
+    `python cicd_saagie_tool/__main__.py --action update_job --job_name your_job_name --saagie_url "%SAAGIE_URL%" --saagie_user "%SAAGIE_USER%" --saagie_pwd "%SAAGIE_PWD%" --saagie_realm "%SAAGIE_REALM%" --saagie_env your_env_name`
 
   * For Linux user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-    `python __main__.py --action update_job --job_name your_job_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env your_env_name`
+    `python cicd_saagie_tool/__main__.py --action update_job --job_name your_job_name --saagie_url "$SAAGIE_URL" --saagie_user "$SAAGIE_USER" --saagie_pwd "$SAAGIE_PWD" --saagie_realm "$SAAGIE_REALM" --saagie_env your_env_name`
 
 - To run a job, same thing as update, by using `--action run`,
   * For windows user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-    `python __main__.py --action run_job --job_name your_job_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_USER% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env your_env_name`
+    `python cicd_saagie_tool/__main__.py --action run_job --job_name your_job_name --saagie_url "%SAAGIE_URL%" --saagie_user "%SAAGIE_USER%" --saagie_pwd "%SAAGIE_PWD%" --saagie_realm "%SAAGIE_REALM%" --saagie_env your_env_name`
 
   * For Linux user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-    `python __main__.py --action run_job --job_name your_job_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env your_env_name`
+    `python cicd_saagie_tool/__main__.py --action run_job --job_name your_job_name --saagie_url "$SAAGIE_URL" --saagie_user "$SAAGIE_USER" --saagie_pwd "$SAAGIE_PWD" --saagie_realm "$SAAGIE_REALM" --saagie_env your_env_name`
 
 - To update a pipeline,
   * For windows user, use the following command line by replacing `your_pipeline_name` and `dev` if you want to use another environment:
-    `python __main__.py --action update_pipeline --pipeline_name your_pipeline_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_USER% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env your_env_name`
+    `python cicd_saagie_tool/__main__.py --action update_pipeline --pipeline_name your_pipeline_name --saagie_url "%SAAGIE_URL%" --saagie_user "%SAAGIE_USER%" --saagie_pwd "%SAAGIE_PWD%" --saagie_realm "%SAAGIE_REALM%" --saagie_env your_env_name`
 
   * For Linux user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-    `python __main__.py --action update_pipeline --pipeline_name your_pipeline_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env your_env_name`
+    `python cicd_saagie_tool/__main__.py --action update_pipeline --pipeline_name your_pipeline_name --saagie_url "$SAAGIE_URL" --saagie_user "$SAAGIE_USER" --saagie_pwd "$SAAGIE_PWD" --saagie_realm "$SAAGIE_REALM" --saagie_env your_env_name`
 
 - To run a pipeline,
   * For windows user, use the following command line by replacing `your_pipeline_name` and `dev` if you want to use another environment:
-    `python __main__.py --action run_pipeline --pipeline_name your_pipeline_name --saagie_url %SAAGIE_URL% --saagie_user %SAAGIE_USER% --saagie_pwd %SAAGIE_PWD% --saagie_realm %SAAGIE_REALM% --saagie_env your_env_name`
+    `python cicd_saagie_tool/__main__.py --action run_pipeline --pipeline_name your_pipeline_name --saagie_url "%SAAGIE_URL%" --saagie_user "%SAAGIE_USER%" --saagie_pwd "%SAAGIE_PWD%" --saagie_realm "%SAAGIE_REALM%" --saagie_env your_env_name`
 
   * For Linux user, use the following command line by replacing `your_job_name` and `dev` if you want to use another environment:
-    `python __main__.py --action run_pipeline --pipeline_name your_pipeline_name --saagie_url $SAAGIE_URL --saagie_user $SAAGIE_USER --saagie_pwd $SAAGIE_PWD --saagie_realm $SAAGIE_REALM --saagie_env your_env_name`
+    `python cicd_saagie_tool/__main__.py --action run_pipeline --pipeline_name your_pipeline_name --saagie_url "$SAAGIE_URL" --saagie_user "$SAAGIE_USER" --saagie_pwd "$SAAGIE_PWD" --saagie_realm "$SAAGIE_REALM" --saagie_env your_env_name`
 
 
 ### Environment configuration file

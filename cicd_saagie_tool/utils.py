@@ -23,6 +23,7 @@ def package_code(name_file, root_dir, archive_format="zip"):
     :return: string, name of the archive
     """
     if root_dir:
+        logging.info(f"Creating archive: {name_file}.{archive_format} ...")
         return shutil.make_archive(name_file, archive_format, root_dir)
     else:
         return None
@@ -48,12 +49,12 @@ def connect_to_saagie(url, id_platform, user, password, realm):
     return saagie_client
 
 
-def create_or_upgrade_job(client_saagie, job_config_file, env):
+def create_or_upgrade_job(client_saagie, job_config_file, env_config_file):
     """
     Package code and then create or upgrade a job on Saagie
     :param client_saagie: SaagieAPI, an instance of SaagieAPI
     :param job_config_file: str, job config file path
-    :param env: str, environment of Saagie that you want to create or upgrade job
+    :param env_config_file: str, path of environment config file
     :return: dict, dict of job informaiton
     """
     try:
@@ -63,39 +64,43 @@ def create_or_upgrade_job(client_saagie, job_config_file, env):
     except Exception as e:
         return handle_log_error(f"Error when loading job config file: [{job_config_file}]", e)
     try:
-        logging.debug(f"Loading env config file: [./saagie/envs/{env}.json] ...")
-        with open(f"./saagie/envs/{env}.json", "r", encoding="utf8") as f:
+        logging.debug(f"Loading env config file: [{env_config_file}] ...")
+        with open(env_config_file, "r", encoding="utf8") as f:
             env_config = json.load(f)
     except Exception as e:
-        return handle_log_error(f"Error when loading env config file: [./saagie/envs/{env}.json]", e)
+        return handle_log_error(f"Error when loading env config file: [{env_config_file}]", e)
 
     release_note = "WIP"
     if "CI" in os.environ:
-        release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
+        if "GITHUB_SERVER_URL" in os.environ:
+            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
+        else:
+            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['CI_PROJECT_URL']}/-/commit/{os.environ['CI_COMMIT_SHA']}"
 
     res = client_saagie.jobs.create_or_upgrade(
         job_name=job_config["job_name"],
         project_id=env_config["project_id"],
         file=job_config["file_path"] if "file_path" in job_config and bool(job_config["file_path"]) else None,
-        description=job_config["description"] if "description" in job_config else "",
-        category=job_config["category"] if "category" in job_config else "",
-        technology=job_config["technology"] if "technology" in job_config else "",
-        technology_catalog=job_config["technology_catalog"] if "technology_catalog" in job_config else "",
+        use_previous_artifact=False,
+        description=job_config["description"] if "description" in job_config else None,
+        category=job_config["category"] if "category" in job_config else None,
+        technology=job_config["technology"] if "technology" in job_config else None,
+        technology_catalog=job_config["technology_catalog"] if "technology_catalog" in job_config else None,
         runtime_version=job_config["runtime_version"] if "runtime_version" in job_config and bool(job_config["runtime_version"]) else None,
         command_line=job_config["command_line"] if "command_line" in job_config and bool(job_config["command_line"]) else None,
         release_note=release_note,
-        extra_technology=job_config["extra_technology"] if "extra_technology" in job_config else None,
-        extra_technology_version=job_config["extra_technology_version"] if "extra_technology_version" in job_config else None
+        extra_technology=job_config["extra_technology"] if "extra_technology" in job_config and bool(job_config["extra_technology"]) else None,
+        extra_technology_version=job_config["extra_technology_version"] if "extra_technology_version" in job_config and bool(job_config["extra_technology_version"]) else None
     )
     return res
 
 
-def run_job(client_saagie, job_config_file, env):
+def run_job(client_saagie, job_config_file, env_config_file):
     """
     Run a job on Saagie
     :param client_saagie: SaagieAPI, an instance of SaagieAP
     :param job_config_file: str, job config file path
-    :param env: str, environment of Saagie that you want to create or upgrade job
+    :param env_config_file: str, path of environment config file
     :return: dict, dict of job instance ID and status
     """
     try:
@@ -105,11 +110,11 @@ def run_job(client_saagie, job_config_file, env):
     except Exception as e:
         return handle_log_error(f"Error when loading job config file: [{job_config_file}]", e)
     try:
-        logging.debug(f"Loading env config file: [./saagie/envs/{env}.json] ...")
-        with open(f"./saagie/envs/{env}.json", "r") as f:
+        logging.debug(f"Loading env config file: [{env_config_file}] ...")
+        with open(env_config_file, "r") as f:
             env_config = json.load(f)
     except Exception as e:
-        return handle_log_error(f"Error when loading env config file: [./saagie/envs/{env}.json]", e)
+        return handle_log_error(f"Error when loading env config file: [{env_config_file}]", e)
     logging.debug(f"Getting job ID: [{job_config['job_name']}] ...")
     job_id = client_saagie.jobs.get_id(job_config["job_name"], env_config["project_name"])
     logging.info("Job ID: " + job_id)
@@ -177,12 +182,12 @@ def create_graph(pipeline_config_file, env):
     return graph_pipeline
 
 
-def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env):
+def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env_config_file):
     """
     Create or upgrade pipeline in Saagie
     :param client_saagie: SaagieAPI, an instance of SaagieAPI
     :param pipeline_config_file: str, pipeline config file path
-    :param env: str, environment of Saagie that you want upgrade pipeline
+    :param env_config_file: str, path of environment config file
     :return: dict of pipeline information
     """
     try:
@@ -200,13 +205,17 @@ def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env):
             pipeline_info = yaml.safe_load(f)
     else:
         raise Exception("Pipeline artefact file must be json or yaml file")
-    with open(f"./saagie/envs/{env}.json", "r") as f:
+    with open(env_config_file, "r") as f:
         env_config = json.load(f)
 
+    env = Path(env_config_file).stem
     graph_pipeline = create_graph(pipeline_config["file_path"], env)
     release_note = "WIP"
     if "CI" in os.environ:
-        release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
+        if "GITHUB_SERVER_URL" in os.environ:
+            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
+        else:
+            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['CI_PROJECT_URL']}/-/commit/{os.environ['CI_COMMIT_SHA']}"
 
     res = client_saagie.pipelines.create_or_upgrade(
         name=pipeline_info["pipeline_name"],
@@ -220,12 +229,12 @@ def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env):
     return res
 
 
-def run_pipeline(client_saagie, pipeline_config_file, env):
+def run_pipeline(client_saagie, pipeline_config_file, env_config_file):
     """
     Run a pipeline on Saagie
     :param client_saagie: SaagieAPI, an instance of SaagieAP
     :param pipeline_config_file: str, pipeline config file path
-    :param env: str, environment of Saagie that you want to create or upgrade job
+    :param env_config_file: str, Path of environment config file
     :return: dict, dict of job instance ID and status
     """
     try:
@@ -244,8 +253,8 @@ def run_pipeline(client_saagie, pipeline_config_file, env):
     else:
         raise Exception("Pipeline config file must be json or yaml file")
 
-    logging.debug(f"Loading environment config file: ./saagie/envs/{env}.json")
-    with open(f"./saagie/envs/{env}.json", "r") as f:
+    logging.debug(f"Loading environment config file: {env_config_file} ...")
+    with open(env_config_file, "r") as f:
         env_config = json.load(f)
     logging.debug(f"Getting pipeline ID of {pipeline_info['pipeline_name']} ...")
     pipeline_id = client_saagie.pipelines.get_id(project_name=env_config["project_name"], pipeline_name=pipeline_info["pipeline_name"])
