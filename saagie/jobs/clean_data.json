@@ -1,7 +1,7 @@
 {
     "job_name": "2 Clean data",
     "file_path": "dist/clean_data/clean_data.zip",
-    "description": "new test 4",
+    "description": "new test",
     "category": "Processing",
     "technology": "python",
     "technology_catalog": "Saagie",
