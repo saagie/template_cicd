@@ -48,10 +48,6 @@ def main():
         logging.warning("You must specify a job or a pipeline name")
         exit(0)
 
-    # Retrieving environment config
-    with open(Path(args.env_config_folder).parents[0] / f"{args.saagie_env}.json", "r") as f:
-        env_config = json.load(f)
-
     # Retrieving job config
     if "job" in args.action:
         with open(Path(args.job_config_folder).parents[0] / f"{args.job_name}.json", "r") as f:
@@ -63,6 +59,11 @@ def main():
             logging.info(f"Successfully package job: [{args.job_name}]")
         else:
             logging.info(f"There is no corresponding artefact path for the job: [{args.job_name}]")
+        return
+
+    # Retrieving environment config
+    with open(Path(args.env_config_folder).parents[0] / f"{args.saagie_env}.json", "r") as f:
+        env_config = json.load(f)
 
     if args.action == "update_job":
         client_saagie = utils.connect_to_saagie(args.saagie_url,
