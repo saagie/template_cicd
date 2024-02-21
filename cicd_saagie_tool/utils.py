@@ -71,11 +71,14 @@ def create_or_upgrade_job(client_saagie, job_config_file, env_config_file):
         return handle_log_error(f"Error when loading env config file: [{env_config_file}]", e)
 
     release_note = "WIP"
+    url_git = ""
     if "CI" in os.environ:
         if "GITHUB_SERVER_URL" in os.environ:
-            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
+            url_git = f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
+            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {url_git}"
         else:
-            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['CI_PROJECT_URL']}/-/commit/{os.environ['CI_COMMIT_SHA']}"
+            url_git = f"{os.environ['CI_PROJECT_URL']}/-/commit/{os.environ['CI_COMMIT_SHA']}"
+            release_note = f"{os.environ['CI_COMMIT_MESSAGE']}"
 
     res = client_saagie.jobs.create_or_upgrade(
         job_name=job_config["job_name"],
@@ -90,7 +93,8 @@ def create_or_upgrade_job(client_saagie, job_config_file, env_config_file):
         command_line=job_config["command_line"] if "command_line" in job_config and bool(job_config["command_line"]) else None,
         release_note=release_note,
         extra_technology=job_config["extra_technology"] if "extra_technology" in job_config and bool(job_config["extra_technology"]) else None,
-        extra_technology_version=job_config["extra_technology_version"] if "extra_technology_version" in job_config and bool(job_config["extra_technology_version"]) else None
+        extra_technology_version=job_config["extra_technology_version"] if "extra_technology_version" in job_config and bool(job_config["extra_technology_version"]) else None,
+        source_url=url_git
     )
     return res
 
