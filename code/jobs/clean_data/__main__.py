@@ -64,7 +64,7 @@ except:
         with fs.open(path_test, 'w') as f:
             test_df.to_csv(f, sep=',', index=False)
 
-    ## Cleansing
+    # Cleansing
     train_df, test_df = read_data()
     train_df['text'] = train_df['text'].str.replace('[^\w\s]', '')
     test_df['text'] = test_df['text'].str.replace('[^\w\s]', '')
