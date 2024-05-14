@@ -16,7 +16,7 @@ jobs:
 
       - name: Ci with saagie tool
         id: update
-        uses: saagie/saagie_cicd_tool@v0.0.2
+        uses: saagie/saagie_cicd_tool@v0.0.3
         with:
           saagie_url: ${{secrets.SAAGIE_URL}}
           saagie_user: ${{secrets.SAAGIE_USER}}

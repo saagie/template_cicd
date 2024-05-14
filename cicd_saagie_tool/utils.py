@@ -1,11 +1,28 @@
 import logging
 
-from saagieapi import SaagieApi, GraphPipeline, ConditionNode, JobNode, ConditionStatusNode, ConditionExpressionNode
+from saagieapi import SaagieApi, GraphPipeline, ConditionStatusNode, ConditionExpressionNode
 import json
 import shutil
 import os
 import yaml
 from pathlib import Path
+import re
+import unicodedata
+import uuid
+
+
+def fix_forbidden_alias(alias):
+    forbidden_alias = "INIT"
+    return f"ALIAS_{forbidden_alias}" if alias.lower() == forbidden_alias.lower() else alias
+
+
+def normalize_name_to_alias(name, default_alias):
+    alias = unicodedata.normalize('NFD', name)
+    alias = re.sub(r'[^\x00-\x7F]+', '', alias)
+    alias = re.sub(r'[ -]', '_', alias)
+    alias = re.sub(r'[^A-Za-z0-9_]', '', alias)
+    alias = default_alias if len(alias) < 2 else alias
+    return fix_forbidden_alias(alias)
 
 
 def handle_log_error(msg, exception):
@@ -126,11 +143,12 @@ def run_job(client_saagie, job_config_file, env_config_file):
     return client_saagie.jobs.run(job_id)
 
 
-def create_graph(pipeline_config_file, env):
+def create_graph(saagie_client, pipeline_config_file, project_id):
     """
     Create the Graph of Saagie graph pipeline
+    :param saagie_client: SaagieAPI, an instance of SaagieAPI
     :param pipeline_config_file: str, pipeline config file path
-    :param env: str, environment of Saagie that you want upgrade pipeline
+    :param project_id: str, Project ID of Saagie
     :return: saagieapi.GraphPipeline
     """
     file_extension = Path(pipeline_config_file).suffix
@@ -144,43 +162,59 @@ def create_graph(pipeline_config_file, env):
     else:
         raise Exception("Pipeline artefact file must be a json or yaml file")
 
-    pipeline_info = pipeline_config["env"][env]["graph_pipeline"]
+    pipeline_info = pipeline_config["pipeline"]
     graph_pipeline = GraphPipeline()
     list_job_nodes = []
     list_condition_nodes = []
+    dict_ids = {}
 
     logging.debug("Creating graph pipeline ...")
     logging.debug("Creating job nodes ...")
     # Find all job nodes
-    for i in range(len(pipeline_info["job_nodes"])):
-        job_node_info = pipeline_info["job_nodes"][i]
+    for i in range(len(pipeline_info["nodes"])):
+        if "job" in pipeline_info["nodes"][i].keys():
+            job_node_info = pipeline_info["nodes"][i]["job"]
+            job_id = saagie_client.jobs.get_info_by_alias(project_id=project_id,
+                                                          job_alias=job_node_info["alias"],
+                                                          instances_limit=1,
+                                                          versions_only_current=True)["jobByAlias"]["id"]
+            dict_ids = create_dict_uuid_id(dict_ids, job_node_info)
 
-        node_dict = {
-            "id": job_node_info["id"],
-            "job": {"id": job_node_info["job_id"]},
-            "nextNodes": job_node_info["next_nodes"],
-        }
-        list_job_nodes.append(node_dict)
-
-    logging.debug("Creating condition nodes ...")
-    # Find all condition nodes
-    for i in range(len(pipeline_info["condition_nodes"])):
-        condition_node_info = pipeline_info["condition_nodes"][i]
-
-        condition_dict = {
-            "id": condition_node_info["id"],
-            "nextNodesSuccess": condition_node_info["next_nodes_success"],
-            "nextNodesFailure": condition_node_info["next_nodes_failure"],
-        }
-        if condition_node_info["condition_type"] == "status":
-            condition_dict["condition"] = {
-                "status": {"value": condition_node_info["value"]}
+            node_dict = {
+                "id": dict_ids[job_node_info["node"]],
+                "job": {"id": job_id},
+                "nextNodes": [dict_ids[next_node] for next_node in job_node_info["nextNodes"]],
             }
-        elif condition_node_info["condition_type"] == "expression":
-            condition_dict["condition"] = {
-                "custom": {"expression": condition_node_info["value"]}
+            list_job_nodes.append(node_dict)
+
+        elif "conditionExpression" in pipeline_info["nodes"][i].keys():
+            condition_node_info = pipeline_info["nodes"][i]["conditionExpression"]
+
+            dict_ids = create_dict_uuid_id(dict_ids, condition_node_info)
+
+            condition_dict = {
+                "id": dict_ids[condition_node_info["node"]],
+                "nextNodesSuccess": [dict_ids[next_node] for next_node in condition_node_info["nextNodesSuccess"]],
+                "nextNodesFailure": [dict_ids[next_node] for next_node in condition_node_info["nextNodesFailure"]],
+                "condition": {"custom": {"expression": condition_node_info["expression"]}}
             }
-        list_condition_nodes.append(condition_dict)
+            list_condition_nodes.append(condition_dict)
+
+        elif "conditionStatus" in pipeline_info["nodes"][i].keys():
+            condition_node_info = pipeline_info["nodes"][i]["conditionStatus"]
+            dict_ids = create_dict_uuid_id(dict_ids, condition_node_info)
+
+            condition_dict = {
+                "id": dict_ids[condition_node_info["node"]],
+                "nextNodesSuccess": [dict_ids[next_node] for next_node in condition_node_info["nextNodesSuccess"]],
+                "nextNodesFailure": [dict_ids[next_node] for next_node in condition_node_info["nextNodesFailure"]],
+                "condition": {"status": {"value": condition_node_info["trigger"]}}
+            }
+            list_condition_nodes.append(condition_dict)
+        else:
+            logging.warning(f"{pipeline_info['nodes'][i]} not recognizing .... Some error in your pipeline config file")
+    logging.debug(f"List of job nodes: {list_job_nodes}")
+    logging.debug(f"List of condition nodes: {list_condition_nodes}")
     graph_pipeline.list_job_nodes = list_job_nodes
     graph_pipeline.list_conditions_nodes = list_condition_nodes
     return graph_pipeline
@@ -203,32 +237,39 @@ def create_or_upgrade_graph_pipeline(client_saagie, pipeline_config_file, env_co
     file_extension = Path(pipeline_config["file_path"]).suffix
     if file_extension == ".json":
         with open(pipeline_config["file_path"], "r", encoding="utf8") as f:
-            pipeline_info = json.load(f)
+            pipeline_info_schema = json.load(f)
     elif file_extension == ".yaml" or file_extension == ".yml":
         with open(pipeline_config["file_path"], "r", encoding="utf8") as f:
-            pipeline_info = yaml.safe_load(f)
+            pipeline_info_schema = yaml.safe_load(f)
     else:
         raise Exception("Pipeline artefact file must be json or yaml file")
     with open(env_config_file, "r") as f:
         env_config = json.load(f)
 
-    env = Path(env_config_file).stem
-    graph_pipeline = create_graph(pipeline_config["file_path"], env)
+    pipeline_info = pipeline_info_schema["pipeline"]
+    graph_pipeline = create_graph(client_saagie, pipeline_config["file_path"], env_config["project_id"])
     release_note = "WIP"
+    url_git = ""
     if "CI" in os.environ:
         if "GITHUB_SERVER_URL" in os.environ:
-            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
+            url_git = f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/commit/{os.environ['GITHUB_SHA']}"
+            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {url_git}"
         else:
-            release_note = f"{os.environ['CI_COMMIT_MESSAGE']} - {os.environ['CI_PROJECT_URL']}/-/commit/{os.environ['CI_COMMIT_SHA']}"
+            url_git = f"{os.environ['CI_PROJECT_URL']}/-/commit/{os.environ['CI_COMMIT_SHA']}"
+            release_note = f"{os.environ['CI_COMMIT_MESSAGE']}"
+
+    alias = pipeline_info["alias"] if "alias" in pipeline_info and bool(pipeline_info["alias"]) else normalize_name_to_alias(pipeline_info["name"], pipeline_info["alias"])
 
     res = client_saagie.pipelines.create_or_upgrade(
-        name=pipeline_info["pipeline_name"],
+        name=pipeline_info["name"],
+        alias=alias,
         project_id=env_config["project_id"],
         graph_pipeline=graph_pipeline,
         release_note=release_note,
-        description=pipeline_info["description"] if "description" in pipeline_info and bool(pipeline_info["description"])else None,
-        has_execution_variables_enabled=pipeline_info["has_execution_variables_enabled"] if
-        "has_execution_variables_enabled" in pipeline_info and bool(pipeline_info["has_execution_variables_enabled"]) else None,
+        description=pipeline_info["description"] if "description" in pipeline_info and bool(pipeline_info["description"]) else None,
+        has_execution_variables_enabled=pipeline_info["executionVariables"] if
+        "executionVariables" in pipeline_info and bool(pipeline_info["executionVariables"]) else None,
+        source_url=url_git
     )
     return res
 
@@ -265,3 +306,28 @@ def run_pipeline(client_saagie, pipeline_config_file, env_config_file):
     logging.info("Pipeline ID: " + pipeline_id)
     logging.debug(f"Running pipeline: [{pipeline_id}]...")
     return client_saagie.pipelines.run(pipeline_id)
+
+
+def create_dict_uuid_id(dict_ids, node):
+    """
+    Create a dictionary of node id and uuid
+    :param dict_ids: dict, dictionary of node id and uuid
+    :param node: dict, node information
+    :return:
+    """
+    result_dict = dict_ids
+    if node["node"] not in result_dict.keys():
+        result_dict[node["node"]] = str(uuid.uuid4())
+    if "nextNodes" in node.keys():
+        for next_node in node["nextNodes"]:
+            if next_node not in result_dict.keys():
+                result_dict[next_node] = str(uuid.uuid4())
+    if "nextNodesSuccess" in node.keys():
+        for next_node in node["nextNodesSuccess"]:
+            if next_node not in result_dict.keys():
+                dict_ids[next_node] = str(uuid.uuid4())
+    if "nextNodesFailure" in node.keys():
+        for next_node in node["nextNodesSuccess"]:
+            if next_node not in result_dict.keys():
+                dict_ids[next_node] = str(uuid.uuid4())
+    return result_dict
