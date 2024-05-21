@@ -111,7 +111,8 @@ def create_or_upgrade_job(client_saagie, job_config_file, env_config_file):
         release_note=release_note,
         extra_technology=job_config["extra_technology"] if "extra_technology" in job_config and bool(job_config["extra_technology"]) else None,
         extra_technology_version=job_config["extra_technology_version"] if "extra_technology_version" in job_config and bool(job_config["extra_technology_version"]) else None,
-        source_url=url_git
+        source_url=url_git,
+        docker_info=job_config["docker_info"] if "docker_info" in job_config and bool(job_config["docker_info"]) else None,
     )
     return res
 
