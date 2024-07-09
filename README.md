@@ -192,77 +192,86 @@ Type: `object`
   - _The path of pipeline artefact_
   - Type: `string`
 
-A pipeline artefact have the following schema, it can be a json or yaml file.
+A pipeline artefact have the following schema, it's a yaml file.
 
 _A pipeline inside Saagie_
 Type: `object`
 
 **_Properties_**
-- **_env_** `required`
-  - _Dict that contains all environment where you want to deploy job_
+- **_schema_** `required`
+  - _Version of schema_
+  - Type: `string`
+- **_pipeline_** `required`
+  - _Dict that contains all information of the pipeline_
   - Type: `object`
-  - **_environment_name_** `required`
-    - _Group all variables needed by each environment inside one dict_
-    - Type: `object`
-    - Example: ```"dev": {"graph_pipeline": {"job_nodes": [], "condition_nodes": []}}```
+  - **_Properties_**:
+    - **_name_** `required`
+      - _Name of the pipeline_
+      - Type: `string`
+    - **_alias_** `required`
+      - _Alias of the pipeline, it cannot contain special character_
+      - Type: `string`
+    - **_executionVariables_** `required`
+      - _Whether to activate the execution variables. If not filled or not present, defaults to current value_
+        - Type: `bool`
+        - Example:  `false`
+    - **_node_** `required`
+      - _Dict of pipeline's node_
+      - Type: `object`
     - **_Properties_**:
-      - **_graph_pipeline_**
-        - _Graph pipeline_
+      - **_job_**
+        - _List of job nodes_
         - Type: `object`
         - **_Properties_**:
-          - **_job_nodes_**
-            - _List of job nodes_
-            - Type: `object`
-            - **_job_**:
-              - **_Properties_**:
-                - **_id_**
-                  - _An unique string to identify this job_
-                  - Type: `UUID`
-                  - Example: `0c83c5ab-2987-45cd-b91b-c63434f49ed7`
-                - **_job_name_**
-                  - _Name of the job_
-                  - Type: `string`
-                  - Example: `my awesome job 1`
-                - **_job_id_**
-                  - _Job ID on Saagie's platform_
-                  - Type: `string`
-                  - Example: `6bb1b3b2-dd21-4d63-9661-ef2ad7308728`
-                - **_next_nodes_**
-                  - _Next nodes of this job, each value in the list should be an ID of job or condition_
-                  - Type: `List[UUID]`
-                  - Example: `["7165e9cb-3a05-4b9f-b2ac-cdd7ec29c949"]`
-          - **_condition_nodes_**
-            - _List of condition nodes_
-            - Type: `object`
-            - **_condition_**:
-              - **_Properties_**:
-                - **_id_**
-                  - _An unique string to identify this condition_
-                  - Type: `string`
-                  - Example: `7165e9cb-3a05-4b9f-b2ac-cdd7ec29c9498`
-                - **_condition_type_**
-                  - _Type of the condition, should be `status` or `expression`_
-                  - Type: `string`
-                  - Example: `status`
-                - **_value_**
-                  - _The value of the condition.If it's a condition on status, the value should be `AllSuccess` or `AllSuccessOrSkipped` or `AtLeastOneSuccess` .
-                    If it's a condition on expression, make sure the value is a Common Expression Language (CEL) expression_
-                  - Type: `string`
-                  - Example: `AllSuccessOrSkipped`
-                - **_next_nodes_success_**
-                  - _Next nodes of this job, each value in the list should be an ID of job or condition_
-                  - Type: `List[string]`
-                  - Example: `["fca09324-a52e-4121-a9d3-b04f1c03dd28"]`
-                - **_next_nodes_failure_**
-                  - _Indicates whether the pipeline will start with this job_
-                  - Type: `List[string]`
-                  - Example: `["5cc506e4-f5cb-4ed3-810b-d79b8484b857"]`
-
-- **_has_execution_variables_enabled_** `optional`
-  - _Whether to activate the execution variables. If not filled or not present, defaults to current value_
-  - Type: `bool`
-  - Example:  `True`
-- **_description_** `optional`
-  - _Description for your pipeline. If not filled or not present, defaults to current value_
-  - Type: `string`
-  - Example: `This is my description`
+          - **_alias_** `required`
+            - _Job alias_
+            - Type: `string`
+            - Example: `my_first_job`
+          - **_node_** `required`
+            - _An identifier in the yaml file to identify this node_
+            - Type: `string`
+            - Example: `node1`
+          - **_next_nodes_** `optional`
+            - _Next nodes of this job, each value in the list should be the identifier `node` of job or condition in the yaml file_
+            - Type: `List[string]`
+            - Example: `["node1"]`
+      - **_conditionStatus_**
+        - _List of condition on status nodes_
+        - Type: `object`
+        - **_Properties_**:
+          - **_trigger_** `required`
+            - _How to trigger this status. Can be `AllSuccessOrSkipped`, or `AllSuccess` or `AtLeastOneSuccess`_
+            - Type: `string`
+            - Example: `AllSuccessOrSkipped`
+          - **_node_** `required`
+            - _An identifier in the yaml file to identify this node_
+            - Type: `string`
+            - Example: `node_condition_status1`
+          - **_nextNodesSuccess_**
+            - _Next nodes of this job in case of success, each value in the list should be the identifier `node` of job or condition_
+            - Type: `List[string]`
+            - Example: `["node1"]`
+          - **_next_nodes_failure_**
+            - _Next nodes of this job in case of failure, each value in the list should be the identifier `node` of job or condition_
+            - Type: `List[string]`
+            - Example: `["node2"]`
+      - **_conditionExpression_**
+        - _List of condition on expression nodes_
+        - Type: `object`
+        - **_Properties_**:
+          - **_expression_** `required`
+            - _The expression to evaluate, the expession should use CEL specification_
+            - Type: `string`
+            - Example: `1 + 1 == 2`
+          - **_node_** `required`
+            - _An identifier in the yaml file to identify this node_
+            - Type: `string`
+            - Example: `node_condition_status1`
+          - **_nextNodesSuccess_**
+            - _Next nodes of this job in case of success, each value in the list should be the identifier `node` of job or condition_
+            - Type: `List[string]`
+            - Example: `["node1"]`
+          - **_next_nodes_failure_**
+            - _Next nodes of this job in case of failure, each value in the list should be the identifier `node` of job or condition_
+            - Type: `List[string]`
+            - Example: `["node2"]`
