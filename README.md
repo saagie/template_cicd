@@ -250,11 +250,11 @@ Type: `object`
                   - Type: `string`
                   - Example: `AllSuccessOrSkipped`
                 - **_next_nodes_success_**
-                  - _Next nodes of this job, each value in the list should be an ID of job or condition_
+                  - _Next nodes of this job in case of success, each value in the list should be an ID of job or condition_
                   - Type: `List[string]`
                   - Example: `["fca09324-a52e-4121-a9d3-b04f1c03dd28"]`
                 - **_next_nodes_failure_**
-                  - _Indicates whether the pipeline will start with this job_
+                  - _Next nodes of this job in case of failure, each value in the list should be an ID of job or condition_
                   - Type: `List[string]`
                   - Example: `["5cc506e4-f5cb-4ed3-810b-d79b8484b857"]`
 
